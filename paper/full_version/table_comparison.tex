@@ -1,0 +1,26 @@
+% Comparison table: OpenDiscoveryTrace vs existing benchmarks
+\begin{table*}[t]
+\caption{Comparison of \dataset with existing AI science benchmarks. \dataset is the first benchmark to capture full process traces including error logging, revision tracking, and failure analysis alongside final output evaluation. $\checkmark$ = supported, $\times$ = not supported, $\sim$ = partial support.}
+\label{tab:comparison}
+\centering
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Benchmark} & \textbf{Process} & \textbf{Error} & \textbf{Revision} & \textbf{Multi-} & \textbf{Science} & \textbf{Multi-} \\
+ & \textbf{Traces} & \textbf{Logging} & \textbf{Tracking} & \textbf{Domain} & \textbf{Specific} & \textbf{Model} \\
+\midrule
+ScienceAgentBench \citep{chen2025scienceagentbench} & $\times$ & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+DiscoveryBench \citep{majumder2024discoverybench} & $\times$ & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+The AI Scientist \citep{lu2024aiscientist} & $\times$ & $\times$ & $\times$ & $\sim$ & $\checkmark$ & $\checkmark$ \\
+PaperBench \citep{starace2025paperbench} & $\times$ & $\times$ & $\times$ & $\sim$ & $\checkmark$ & $\checkmark$ \\
+ResearchBench \citep{liu2025researchbench} & $\times$ & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+SciCode \citep{tian2024scicode} & $\times$ & $\times$ & $\times$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+MLAgentBench \citep{huang2024mlagentbench} & $\sim$ & $\sim$ & $\times$ & $\times$ & $\sim$ & $\checkmark$ \\
+MLE-bench \citep{chan2024mlebench} & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ & $\checkmark$ \\
+WebArena \citep{zhou2024webarena} & $\checkmark$ & $\sim$ & $\times$ & $\times$ & $\times$ & $\checkmark$ \\
+AgentBench \citep{liu2024agentbench} & $\checkmark$ & $\sim$ & $\times$ & $\times$ & $\times$ & $\checkmark$ \\
+\midrule
+\textbf{\dataset (ours)} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
