@@ -1,0 +1,626 @@
+{
+  "task1_outcome_prediction": {
+    "majority_baseline": 0.693,
+    "LogisticRegression": {
+      "accuracy": 0.685,
+      "acc_std": 0.046,
+      "auroc": 0.496,
+      "auroc_std": 0.096
+    },
+    "RandomForest": {
+      "accuracy": 0.614,
+      "acc_std": 0.049,
+      "auroc": 0.452,
+      "auroc_std": 0.091
+    },
+    "GradientBoosting": {
+      "accuracy": 0.614,
+      "acc_std": 0.033,
+      "auroc": 0.426,
+      "auroc_std": 0.066
+    },
+    "feature_importance": {
+      "total_steps": 0.074,
+      "total_tool_calls": 0.055,
+      "total_failures": 0.033,
+      "total_revisions": 0.027,
+      "unique_tools": 0.031,
+      "unique_phases": 0.046,
+      "total_chars_response": 0.702,
+      "n_error_types": 0.032
+    }
+  },
+  "task2_error_localization": {
+    "n_failed_trajectories": 116,
+    "mean_first_error_position": 0.071,
+    "median_first_error_position": 0.0,
+    "std_first_error_position": 0.128,
+    "baseline_always_step0": 0.681,
+    "baseline_always_last": 0.0,
+    "baseline_random": 0.151
+  },
+  "task3_claim_verification": {
+    "claude-opus-4.6": {
+      "success_rate": 0.698,
+      "n": 43,
+      "ci_95_low": 0.549,
+      "ci_95_high": 0.814
+    },
+    "gemini-3.1-pro": {
+      "success_rate": 0.69,
+      "n": 42,
+      "ci_95_low": 0.54,
+      "ci_95_high": 0.809
+    },
+    "gpt-5.4": {
+      "success_rate": 0.69,
+      "n": 42,
+      "ci_95_low": 0.54,
+      "ci_95_high": 0.809
+    },
+    "domain_drug_discovery": {
+      "success_rate": 0.583,
+      "n": 36
+    },
+    "domain_genomics": {
+      "success_rate": 0.806,
+      "n": 31
+    },
+    "domain_literature": {
+      "success_rate": 0.667,
+      "n": 24
+    },
+    "domain_materials_science": {
+      "success_rate": 0.722,
+      "n": 36
+    }
+  },
+  "task5_process_quality": {
+    "claude-opus-4.6": {
+      "mean": 0.724,
+      "std": 0.067,
+      "median": 0.73
+    },
+    "gemini-3.1-pro": {
+      "mean": 0.747,
+      "std": 0.011,
+      "median": 0.742
+    },
+    "gpt-5.4": {
+      "mean": 0.747,
+      "std": 0.008,
+      "median": 0.742
+    },
+    "kruskal_wallis": {
+      "H": 149.886,
+      "p": 0.0
+    }
+  },
+  "failure_taxonomy": {
+    "claude-opus-4.6": {
+      "hallucination": {
+        "count": 1,
+        "pct": 0.2
+      },
+      "reasoning_error": {
+        "count": 153,
+        "pct": 33.1
+      },
+      "tool_misuse": {
+        "count": 308,
+        "pct": 66.7
+      }
+    },
+    "gemini-3.1-pro": {
+      "hallucination": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "reasoning_error": {
+        "count": 119,
+        "pct": 72.1
+      },
+      "tool_misuse": {
+        "count": 46,
+        "pct": 27.9
+      }
+    },
+    "gpt-5.4": {
+      "hallucination": {
+        "count": 0,
+        "pct": 0.0
+      },
+      "reasoning_error": {
+        "count": 51,
+        "pct": 83.6
+      },
+      "tool_misuse": {
+        "count": 10,
+        "pct": 16.4
+      }
+    }
+  },
+  "token_stats": {
+    "total_response_chars": 2804938,
+    "total_observation_chars": 477994,
+    "est_total_tokens": 701234,
+    "mean_response_chars_per_traj": 7540.0,
+    "mean_observation_chars_per_traj": 1285.0,
+    "claude-opus-4.6_mean_chars": 11237.0,
+    "claude-opus-4.6_est_tokens": 2809.0,
+    "gemini-3.1-pro_mean_chars": 5663.0,
+    "gemini-3.1-pro_est_tokens": 1416.0,
+    "gpt-5.4_mean_chars": 5720.0,
+    "gpt-5.4_est_tokens": 1430.0,
+    "tool_usage": {
+      "claude-opus-4.6": {
+        "web_search": 7,
+        "python_exec": 341,
+        "python_": 1,
+        "api_call": 1,
+        "web_": 1,
+        "pubmed_search": 1
+      },
+      "gemini-3.1-pro": {
+        "python_exec": 372,
+        "pubmed_search": 41,
+        "web_search": 49,
+        "api_call": 3
+      },
+      "gpt-5.4": {
+        "api_call": 31,
+        "web_search": 72,
+        "python_exec": 163,
+        "pubmed_search": 35,
+        "calculation": 2,
+        "web_search + pubmed_search": 1
+      }
+    },
+    "tool_latency": {
+      "python_exec": {
+        "mean": 27.48,
+        "n": 876
+      },
+      "web_search": {
+        "mean": 8.81,
+        "n": 128
+      },
+      "api_call": {
+        "mean": 6.76,
+        "n": 35
+      },
+      "pubmed_search": {
+        "mean": 11.2,
+        "n": 77
+      },
+      "python_": {
+        "mean": 64.23,
+        "n": 1
+      },
+      "web_": {
+        "mean": 54.34,
+        "n": 1
+      },
+      "calculation": {
+        "mean": 11.18,
+        "n": 2
+      },
+      "web_search + pubmed_search": {
+        "mean": 9.66,
+        "n": 1
+      }
+    }
+  },
+  "matched_comparisons": {
+    "drug_discovery": {
+      "n_shared_tasks": 31,
+      "n_matched_trajectories": 93,
+      "total_steps": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 4.06,
+            "std": 3.07
+          },
+          "gemini-3.1-pro": {
+            "mean": 4.74,
+            "std": 5.56
+          },
+          "gpt-5.4": {
+            "mean": 4.16,
+            "std": 3.9
+          }
+        },
+        "H": 0.599,
+        "p": 0.741199
+      },
+      "total_tool_calls": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 3.06,
+            "std": 3.07
+          },
+          "gemini-3.1-pro": {
+            "mean": 3.45,
+            "std": 4.88
+          },
+          "gpt-5.4": {
+            "mean": 3.16,
+            "std": 3.9
+          }
+        },
+        "H": 0.611,
+        "p": 0.736904
+      },
+      "total_failures": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 2.52,
+            "std": 2.8
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.42,
+            "std": 0.85
+          },
+          "gpt-5.4": {
+            "mean": 0.03,
+            "std": 0.18
+          }
+        },
+        "H": 29.454,
+        "p": 0.0
+      },
+      "total_revisions": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 1.13,
+            "std": 1.78
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.84,
+            "std": 1.63
+          },
+          "gpt-5.4": {
+            "mean": 0.58,
+            "std": 1.03
+          }
+        },
+        "H": 2.306,
+        "p": 0.315744
+      }
+    },
+    "genomics": {
+      "n_shared_tasks": 31,
+      "n_matched_trajectories": 93,
+      "total_steps": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 5.03,
+            "std": 5.79
+          },
+          "gemini-3.1-pro": {
+            "mean": 5.87,
+            "std": 5.93
+          },
+          "gpt-5.4": {
+            "mean": 3.16,
+            "std": 3.36
+          }
+        },
+        "H": 2.701,
+        "p": 0.259119
+      },
+      "total_tool_calls": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 3.1,
+            "std": 3.52
+          },
+          "gemini-3.1-pro": {
+            "mean": 4.87,
+            "std": 5.93
+          },
+          "gpt-5.4": {
+            "mean": 2.13,
+            "std": 3.28
+          }
+        },
+        "H": 2.373,
+        "p": 0.305219
+      },
+      "total_failures": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 3.32,
+            "std": 5.59
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.48,
+            "std": 0.96
+          },
+          "gpt-5.4": {
+            "mean": 0.0,
+            "std": 0.0
+          }
+        },
+        "H": 29.285,
+        "p": 0.0
+      },
+      "total_revisions": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 1.81,
+            "std": 2.63
+          },
+          "gemini-3.1-pro": {
+            "mean": 1.48,
+            "std": 3.36
+          },
+          "gpt-5.4": {
+            "mean": 0.45,
+            "std": 0.81
+          }
+        },
+        "H": 5.446,
+        "p": 0.065677
+      }
+    },
+    "literature": {
+      "n_shared_tasks": 31,
+      "n_matched_trajectories": 93,
+      "total_steps": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 3.9,
+            "std": 4.04
+          },
+          "gemini-3.1-pro": {
+            "mean": 4.26,
+            "std": 5.91
+          },
+          "gpt-5.4": {
+            "mean": 3.0,
+            "std": 3.47
+          }
+        },
+        "H": 3.802,
+        "p": 0.14943
+      },
+      "total_tool_calls": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 2.9,
+            "std": 4.04
+          },
+          "gemini-3.1-pro": {
+            "mean": 3.26,
+            "std": 5.91
+          },
+          "gpt-5.4": {
+            "mean": 2.0,
+            "std": 3.47
+          }
+        },
+        "H": 3.802,
+        "p": 0.14943
+      },
+      "total_failures": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 2.03,
+            "std": 2.33
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.29,
+            "std": 0.97
+          },
+          "gpt-5.4": {
+            "mean": 0.1,
+            "std": 0.3
+          }
+        },
+        "H": 31.771,
+        "p": 0.0
+      },
+      "total_revisions": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 1.16,
+            "std": 2.05
+          },
+          "gemini-3.1-pro": {
+            "mean": 1.13,
+            "std": 3.16
+          },
+          "gpt-5.4": {
+            "mean": 0.32,
+            "std": 0.65
+          }
+        },
+        "H": 3.889,
+        "p": 0.143084
+      }
+    },
+    "materials_science": {
+      "n_shared_tasks": 31,
+      "n_matched_trajectories": 93,
+      "total_steps": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 3.29,
+            "std": 1.81
+          },
+          "gemini-3.1-pro": {
+            "mean": 4.48,
+            "std": 3.92
+          },
+          "gpt-5.4": {
+            "mean": 3.58,
+            "std": 3.49
+          }
+        },
+        "H": 0.442,
+        "p": 0.801683
+      },
+      "total_tool_calls": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 2.29,
+            "std": 1.81
+          },
+          "gemini-3.1-pro": {
+            "mean": 3.42,
+            "std": 3.81
+          },
+          "gpt-5.4": {
+            "mean": 2.52,
+            "std": 3.38
+          }
+        },
+        "H": 0.461,
+        "p": 0.793951
+      },
+      "total_failures": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 2.1,
+            "std": 1.7
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.29,
+            "std": 0.46
+          },
+          "gpt-5.4": {
+            "mean": 0.19,
+            "std": 0.54
+          }
+        },
+        "H": 34.003,
+        "p": 0.0
+      },
+      "total_revisions": {
+        "per_model": {
+          "claude-opus-4.6": {
+            "mean": 0.84,
+            "std": 1.21
+          },
+          "gemini-3.1-pro": {
+            "mean": 0.39,
+            "std": 0.99
+          },
+          "gpt-5.4": {
+            "mean": 0.29,
+            "std": 0.69
+          }
+        },
+        "H": 6.502,
+        "p": 0.038732
+      }
+    },
+    "logistic_regression": {
+      "accuracy": 0.701,
+      "n": 127,
+      "coefs": {
+        "model": -0.071,
+        "domain": 0.142,
+        "steps": 0.026,
+        "failures": -0.138
+      }
+    }
+  },
+  "difficulty_analysis": {
+    "easy": {
+      "n": 147,
+      "claude-opus-4.6": {
+        "n": 49,
+        "mean_steps": 1.9,
+        "mean_errors": 0.27,
+        "mean_revisions": 0.41,
+        "conclusion_rate": 1.0
+      },
+      "gemini-3.1-pro": {
+        "n": 49,
+        "mean_steps": 3.39,
+        "mean_errors": 0.27,
+        "mean_revisions": 0.55,
+        "conclusion_rate": 1.0
+      },
+      "gpt-5.4": {
+        "n": 49,
+        "mean_steps": 2.0,
+        "mean_errors": 0.0,
+        "mean_revisions": 0.2,
+        "conclusion_rate": 1.0
+      }
+    },
+    "medium": {
+      "n": 153,
+      "claude-opus-4.6": {
+        "n": 51,
+        "mean_steps": 5.78,
+        "mean_errors": 4.14,
+        "mean_revisions": 2.22,
+        "conclusion_rate": 0.98
+      },
+      "gemini-3.1-pro": {
+        "n": 51,
+        "mean_steps": 5.02,
+        "mean_errors": 0.45,
+        "mean_revisions": 1.33,
+        "conclusion_rate": 1.0
+      },
+      "gpt-5.4": {
+        "n": 51,
+        "mean_steps": 4.94,
+        "mean_errors": 0.12,
+        "mean_revisions": 0.63,
+        "conclusion_rate": 1.0
+      }
+    },
+    "hard": {
+      "n": 72,
+      "claude-opus-4.6": {
+        "n": 24,
+        "mean_steps": 4.88,
+        "mean_errors": 3.54,
+        "mean_revisions": 0.83,
+        "conclusion_rate": 1.0
+      },
+      "gemini-3.1-pro": {
+        "n": 24,
+        "mean_steps": 7.42,
+        "mean_errors": 0.42,
+        "mean_revisions": 1.0,
+        "conclusion_rate": 1.0
+      },
+      "gpt-5.4": {
+        "n": 24,
+        "mean_steps": 3.38,
+        "mean_errors": 0.17,
+        "mean_revisions": 0.38,
+        "conclusion_rate": 1.0
+      }
+    }
+  },
+  "cliffs_delta": {
+    "total_steps": {
+      "claude-opus-4.6_vs_gemini-3.1-pro": 0.053,
+      "claude-opus-4.6_vs_gpt-5.4": 0.16,
+      "gemini-3.1-pro_vs_gpt-5.4": 0.023
+    },
+    "total_tool_calls": {
+      "claude-opus-4.6_vs_gemini-3.1-pro": 0.043,
+      "claude-opus-4.6_vs_gpt-5.4": 0.149,
+      "gemini-3.1-pro_vs_gpt-5.4": 0.023
+    },
+    "total_failures": {
+      "claude-opus-4.6_vs_gemini-3.1-pro": 0.512,
+      "claude-opus-4.6_vs_gpt-5.4": 0.613,
+      "gemini-3.1-pro_vs_gpt-5.4": 0.164
+    },
+    "total_revisions": {
+      "claude-opus-4.6_vs_gemini-3.1-pro": 0.164,
+      "claude-opus-4.6_vs_gpt-5.4": 0.244,
+      "gemini-3.1-pro_vs_gpt-5.4": 0.06
+    }
+  }
+}

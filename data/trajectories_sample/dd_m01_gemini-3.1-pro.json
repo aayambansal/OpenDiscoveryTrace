@@ -1,0 +1,57 @@
+{
+  "trajectory_id": "dd_m01_gemini-3.1-pro",
+  "task_id": "dd_m01",
+  "domain": "drug_discovery",
+  "difficulty": "medium",
+  "prompt": "Find all known kinase inhibitors approved by the FDA that target VEGFR-2. For each, report the drug name, approval year, and whether it also inhibits other kinases (multi-kinase inhibitor).",
+  "ground_truth": null,
+  "model": "gemini-3.1-pro",
+  "trajectory": [
+    {
+      "step_id": 0,
+      "timestamp": "2026-04-11T14:29:08.782829Z",
+      "phase": "Conclusion",
+      "thought": "I reviewed the known pharmacological data for FDA-approved small molecule kinase inhibitors targeting VEGFR-2 to extract their approval years and target profiles.",
+      "action": {
+        "type": "conclude",
+        "tool": "",
+        "input": "",
+        "output": ""
+      },
+      "observation": "",
+      "error": {
+        "occurred": false,
+        "type": null,
+        "message": null
+      },
+      "revision_trigger": null,
+      "confidence": null,
+      "raw_response": "PHASE: Conclusion\nTHOUGHT: I reviewed the known pharmacological data for FDA-approved small molecule kinase inhibitors targeting VEGFR-2 to extract their approval years and target profiles. \nFINAL_CLAIM: The following are known FDA-approved kinase inhibitors that target VEGFR-2. Notably, all approved small-molecule VEGFR-2 inhibitors are multi-kinase inhibitors, as they typically also target other receptor tyrosine kinases (like VEGFR-1, VEGFR-3, PDGFR, or c-Kit).\n- Sorafenib (Approved 2005) - Multi-kinase inhibitor\n- Sunitinib (Approved 2006) - Multi-kinase inhibitor\n- Pazopanib (Approved 2009) - Multi-kinase inhibitor\n- Vandetanib (Approved 2011) - Multi-kinase inhibitor\n- Axitinib (Approved 2012) - Multi-kinase inhibitor\n- Regorafenib (Approved 2012) - Multi-kinase inhibitor\n- Cabozantinib (Approved 2012) - Multi-kinase inhibitor\n- Lenvatinib (Approved 2015) - Multi-kinase inhibitor\n- Tivozanib (Approved 2021) - Multi-kinase inhibitor\n- Fruquintinib (Approved 2023) - Multi-kinase inhibitor (highly selective for VEGFR-1, -2, and -3)\nCONFIDENCE: 0.95"
+    }
+  ],
+  "outcome": {
+    "success": null,
+    "final_claim": "The following are known FDA-approved kinase inhibitors that target VEGFR-2. Notably, all approved small-molecule VEGFR-2 inhibitors are multi-kinase inhibitors, as they typically also target other receptor tyrosine kinases (like VEGFR-1, VEGFR-3, PDGFR, or c-Kit).\n- Sorafenib (Approved 2005) - Multi-kinase inhibitor\n- Sunitinib (Approved 2006) - Multi-kinase inhibitor\n- Pazopanib (Approved 2009) - Multi-kinase inhibitor\n- Vandetanib (Approved 2011) - Multi-kinase inhibitor\n- Axitinib (Approved 2012) - Multi-kinase inhibitor\n- Regorafenib (Approved 2012) - Multi-kinase inhibitor\n- Cabozantinib (Approved 2012) - Multi-kinase inhibitor\n- Lenvatinib (Approved 2015) - Multi-kinase inhibitor\n- Tivozanib (Approved 2021) - Multi-kinase inhibitor\n- Fruquintinib (Approved 2023) - Multi-kinase inhibitor (highly selective for VEGFR-1, -2, and -3)",
+    "confidence": 0.95,
+    "verification": {
+      "method": "pending",
+      "result": null,
+      "score": null
+    },
+    "failure_type": null,
+    "recovery_attempted": false,
+    "recovery_successful": null
+  },
+  "metadata": {
+    "total_steps": 1,
+    "total_tokens_est": 278,
+    "total_tool_calls": 0,
+    "total_failures": 0,
+    "total_revisions": 0,
+    "wall_time_seconds": 15.8,
+    "max_steps_reached": false,
+    "model_version": "gemini-3.1-pro",
+    "temperature": 0.0,
+    "collection_timestamp": "2026-04-11T14:29:24.579327Z"
+  }
+}

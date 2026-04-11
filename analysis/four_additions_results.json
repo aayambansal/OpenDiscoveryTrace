@@ -1,0 +1,78 @@
+{
+  "iaa": {
+    "n_sample": 60,
+    "annotators": [
+      "gpt-5.4",
+      "claude",
+      "gemini"
+    ],
+    "axes": {
+      "correctness": {
+        "krippendorff_alpha": 0.629,
+        "pairwise": [
+          {
+            "pair": "gpt-5.4_vs_claude",
+            "n": 60,
+            "exact_agreement": 0.6,
+            "weighted_agreement_within_1": 0.85
+          }
+        ]
+      },
+      "reasoning": {
+        "krippendorff_alpha": 0.711,
+        "pairwise": [
+          {
+            "pair": "gpt-5.4_vs_claude",
+            "n": 60,
+            "exact_agreement": 0.467,
+            "weighted_agreement_within_1": 0.95
+          }
+        ]
+      },
+      "tool_use": {
+        "krippendorff_alpha": 0.717,
+        "pairwise": [
+          {
+            "pair": "gpt-5.4_vs_claude",
+            "n": 60,
+            "exact_agreement": 0.833,
+            "weighted_agreement_within_1": 0.983
+          }
+        ]
+      },
+      "autonomy_level": {
+        "krippendorff_alpha": 0.82,
+        "pairwise": [
+          {
+            "pair": "gpt-5.4_vs_claude",
+            "n": 60,
+            "exact_agreement": 0.833,
+            "weighted_agreement_within_1": 1.0
+          }
+        ]
+      }
+    }
+  },
+  "sequence_baselines": {
+    "LSTM": {
+      "accuracy": 0.693,
+      "accuracy_std": 0.015,
+      "auroc": 0.422,
+      "auroc_std": 0.124
+    },
+    "Transformer": {
+      "accuracy": 0.693,
+      "accuracy_std": 0.015,
+      "auroc": 0.369,
+      "auroc_std": 0.093
+    }
+  },
+  "live_retrieval": {
+    "n_trajectories": 30,
+    "live_pubmed_hits": 2,
+    "mean_wall_time": 4.33
+  },
+  "opensource": {
+    "error": "/usr/lib/python3/dist-packages/tensorflow/python/platform/../../libcudnn_engines_precompiled.so.9: undefined symbol: _ZNK5cudnn3cnn15EngineInterface23create_kernel_cache_keyESt10shared_ptrIKNS_7backend12OperationSetEERK16engcfg_backend_t, version libcudnn_graph.so.9"
+  }
+}

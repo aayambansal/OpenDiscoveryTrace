@@ -1,0 +1,312 @@
+{
+  "summary": {
+    "total_trajectories": 372,
+    "models": 3,
+    "domains": 4,
+    "tasks": 124,
+    "success_rate": 0.6929133858267716,
+    "has_claim_rate": 0.9973118279569892,
+    "mean_steps": 4.129032258064516,
+    "median_steps": 2.0,
+    "mean_tool_calls": 3.013440860215054,
+    "mean_failures": 0.9811827956989247,
+    "mean_revisions": 0.8682795698924731,
+    "failure_rate": 0.3118279569892473,
+    "revision_rate": 0.34408602150537637,
+    "mean_wall_time": 99.09440860215052,
+    "max_steps_rate": 0.002688172043010753
+  },
+  "model_comparison": {
+    "success": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 0.6976744186046512,
+          "std": 0.4647008111181006,
+          "median": 1.0,
+          "n": 43
+        },
+        "gemini-3.1-pro": {
+          "mean": 0.6904761904761905,
+          "std": 0.46790113809333267,
+          "median": 1.0,
+          "n": 42
+        },
+        "gpt-5.4": {
+          "mean": 0.6904761904761905,
+          "std": 0.4679011380933327,
+          "median": 1.0,
+          "n": 42
+        }
+      },
+      "kruskal_wallis": {
+        "H": 0.006871035940837993,
+        "p": 0.9965703766691314
+      }
+    },
+    "total_steps": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 4.07258064516129,
+          "std": 3.955388188933015,
+          "median": 3.5,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 4.838709677419355,
+          "std": 5.363815982932988,
+          "median": 1.0,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 3.475806451612903,
+          "std": 3.546356677748545,
+          "median": 1.0,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 3.6885882852687044,
+        "p": 0.1581369036024636
+      }
+    },
+    "total_tool_calls": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 2.838709677419355,
+          "std": 3.1939655927562,
+          "median": 2.0,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 3.75,
+          "std": 5.182247683863689,
+          "median": 0.0,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 2.4516129032258065,
+          "std": 3.5045959109923572,
+          "median": 0.0,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 3.081909573898158,
+        "p": 0.21417651083496225
+      }
+    },
+    "total_failures": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 2.4919354838709675,
+          "std": 3.439360802171117,
+          "median": 2.0,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 0.3709677419354839,
+          "std": 0.8309827851374899,
+          "median": 0.0,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 0.08064516129032258,
+          "std": 0.3275127799541678,
+          "median": 0.0,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 122.02651247890921,
+        "p": 3.1789192209068346e-27
+      }
+    },
+    "total_revisions": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 1.2338709677419355,
+          "std": 1.9922976520677895,
+          "median": 0.0,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 0.9596774193548387,
+          "std": 2.496824629089728,
+          "median": 0.0,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 0.4112903225806452,
+          "std": 0.8065997765809158,
+          "median": 0.0,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 15.56598831243709,
+        "p": 0.0004167624527238971
+      }
+    },
+    "wall_time": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 190.63588709677418,
+          "std": 148.2635432660649,
+          "median": 192.415,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 67.01153225806452,
+          "std": 89.92242797951275,
+          "median": 19.28,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 39.63580645161291,
+          "std": 37.44041731789116,
+          "median": 29.015,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 109.97291878898402,
+        "p": 1.3172982217930063e-24
+      }
+    },
+    "has_claim": {
+      "per_model": {
+        "claude-opus-4.6": {
+          "mean": 0.9919354838709677,
+          "std": 0.08980265101338748,
+          "median": 1.0,
+          "n": 124
+        },
+        "gemini-3.1-pro": {
+          "mean": 1.0,
+          "std": 0.0,
+          "median": 1.0,
+          "n": 124
+        },
+        "gpt-5.4": {
+          "mean": 1.0,
+          "std": 0.0,
+          "median": 1.0,
+          "n": 124
+        }
+      },
+      "kruskal_wallis": {
+        "H": 2.000000000003258,
+        "p": 0.36787944117084315
+      }
+    }
+  },
+  "per_model_per_domain": {
+    "claude-opus-4.6_drug_discovery": {
+      "n": 31,
+      "success_rate": 0.5833333333333334,
+      "has_claim_rate": 1.0,
+      "mean_steps": 4.064516129032258,
+      "mean_failures": 2.5161290322580645
+    },
+    "claude-opus-4.6_genomics": {
+      "n": 31,
+      "success_rate": 0.8181818181818182,
+      "has_claim_rate": 0.967741935483871,
+      "mean_steps": 5.032258064516129,
+      "mean_failures": 3.3225806451612905
+    },
+    "claude-opus-4.6_literature": {
+      "n": 31,
+      "success_rate": 0.625,
+      "has_claim_rate": 1.0,
+      "mean_steps": 3.903225806451613,
+      "mean_failures": 2.032258064516129
+    },
+    "claude-opus-4.6_materials_science": {
+      "n": 31,
+      "success_rate": 0.75,
+      "has_claim_rate": 1.0,
+      "mean_steps": 3.2903225806451615,
+      "mean_failures": 2.096774193548387
+    },
+    "gemini-3.1-pro_drug_discovery": {
+      "n": 31,
+      "success_rate": 0.5833333333333334,
+      "has_claim_rate": 1.0,
+      "mean_steps": 4.741935483870968,
+      "mean_failures": 0.41935483870967744
+    },
+    "gemini-3.1-pro_genomics": {
+      "n": 31,
+      "success_rate": 0.9,
+      "has_claim_rate": 1.0,
+      "mean_steps": 5.870967741935484,
+      "mean_failures": 0.4838709677419355
+    },
+    "gemini-3.1-pro_literature": {
+      "n": 31,
+      "success_rate": 0.625,
+      "has_claim_rate": 1.0,
+      "mean_steps": 4.258064516129032,
+      "mean_failures": 0.2903225806451613
+    },
+    "gemini-3.1-pro_materials_science": {
+      "n": 31,
+      "success_rate": 0.6666666666666666,
+      "has_claim_rate": 1.0,
+      "mean_steps": 4.483870967741935,
+      "mean_failures": 0.2903225806451613
+    },
+    "gpt-5.4_drug_discovery": {
+      "n": 31,
+      "success_rate": 0.5833333333333334,
+      "has_claim_rate": 1.0,
+      "mean_steps": 4.161290322580645,
+      "mean_failures": 0.03225806451612903
+    },
+    "gpt-5.4_genomics": {
+      "n": 31,
+      "success_rate": 0.7,
+      "has_claim_rate": 1.0,
+      "mean_steps": 3.161290322580645,
+      "mean_failures": 0.0
+    },
+    "gpt-5.4_literature": {
+      "n": 31,
+      "success_rate": 0.75,
+      "has_claim_rate": 1.0,
+      "mean_steps": 3.0,
+      "mean_failures": 0.0967741935483871
+    },
+    "gpt-5.4_materials_science": {
+      "n": 31,
+      "success_rate": 0.75,
+      "has_claim_rate": 1.0,
+      "mean_steps": 3.5806451612903225,
+      "mean_failures": 0.1935483870967742
+    }
+  },
+  "per_difficulty": {
+    "easy": {
+      "n": 147,
+      "success_rate": 0.6984126984126984,
+      "has_claim_rate": 1.0,
+      "mean_steps": 2.4285714285714284,
+      "mean_failures": 0.17687074829931973
+    },
+    "medium": {
+      "n": 153,
+      "success_rate": 0.0,
+      "has_claim_rate": 0.9934640522875817,
+      "mean_steps": 5.248366013071895,
+      "mean_failures": 1.5686274509803921
+    },
+    "hard": {
+      "n": 72,
+      "success_rate": null,
+      "has_claim_rate": 1.0,
+      "mean_steps": 5.222222222222222,
+      "mean_failures": 1.375
+    }
+  }
+}

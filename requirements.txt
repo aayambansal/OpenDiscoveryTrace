@@ -1,0 +1,20 @@
+# Core
+aiohttp>=3.9
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+matplotlib>=3.7
+scikit-learn>=1.3
+
+# Chemistry tools (for drug discovery tasks)
+# rdkit-pypi>=2023.9
+
+# Biology tools (for genomics tasks)
+biopython>=1.80
+
+# Optional: open-source model inference
+# torch>=2.0
+# transformers>=4.40
+
+# Optional: vLLM for high-throughput inference
+# vllm>=0.4
