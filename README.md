@@ -125,7 +125,7 @@ Each step records 9 fields:
 
 The complete 372-trajectory dataset is available on HuggingFace:
 
-**[huggingface.co/datasets/aayambansal/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansal/OpenDiscoveryTrace)** *(coming soon)*
+**[huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)** 
 
 ## Citation
 
