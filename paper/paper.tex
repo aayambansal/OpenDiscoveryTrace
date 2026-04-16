@@ -59,10 +59,7 @@
 \vskip 0.3in
 
 \begin{abstract}
-Existing benchmarks for AI scientific agents evaluate final outputs but discard the reasoning process, making it impossible to audit methodology, diagnose failures, or distinguish luck from skill.
-We propose \dataset, a structured dataset of 372 complete agent trajectories (124 tasks, 3 frontier models, 4 science domains) recorded as 9-field-per-step traces extending ReAct with phase tracking, error logging, revision triggers, and confidence.
-Pilot analysis reveals that all three models achieve indistinguishable success rates (${\sim}69\%$, $p{=}0.997$) yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$, $p{<}0.0001$, Cliff's $\delta{=}0.613$), predominantly tool misuse (66.7\%) versus reasoning errors (83.6\%), a dimension invisible to output-only evaluation.
-We release the dataset, schema, harness, and five benchmark tasks under CC-BY-4.0.\footnote{Submitted to the AI for Science workshop (ICML 2026).}
+We propose \dataset, a dataset of 522 AI scientific agent trajectories capturing \emph{how} models reason through scientific tasks---not just what they produce. Each trajectory records a 9-field-per-step trace (thoughts, tool calls, errors, revisions, confidence) across 124 tasks in four science domains, executed by three frontier models and four open-weight models (7 total). Pilot analysis shows all models achieve similar success rates (${\sim}69\%$) yet differ dramatically in error profiles: Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4, predominantly tool misuse (66.7\%) versus reasoning errors (83.6\%)---a dimension invisible to output-only benchmarks. We release the dataset, schema, harness, and five benchmark tasks under CC-BY-4.0.\footnote{Submitted to the AI for Science workshop (ICML 2026).}
 \end{abstract}
 ]
 
@@ -86,7 +83,7 @@ This creates three concrete problems for the field. First, the scientific method
 \section{Proposed Dataset}
 \label{sec:dataset}
 
-\dataset comprises 372 complete trajectories spanning 124 tasks across four scientific domains (drug discovery, materials science, genomics, scientific literature) at three difficulty levels (easy, medium, hard). Three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro) each execute all 124 tasks, yielding a fully balanced design with 31 tasks per model per domain. The dataset additionally includes 30 open-source trajectories from Qwen2.5-1.5B-Instruct (enabling reproducible baselines without proprietary API access) and 30 live-retrieval variant trajectories for ecological validity.
+\dataset comprises 372 frontier-model trajectories spanning 124 tasks across four scientific domains (drug discovery, materials science, genomics, scientific literature) at three difficulty levels. Three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro) each execute all 124 tasks, yielding a fully balanced design (31 tasks per model per domain). The dataset additionally includes \textbf{120 open-weight model trajectories} from four models---Qwen2.5-7B-Instruct, Mistral-7B-Instruct-v0.3, Phi-3.5-mini-instruct, and Qwen2.5-1.5B-Instruct (30 tasks each)---enabling fully reproducible baselines without proprietary API access. Plus 30 live-retrieval variant trajectories. In total: \textbf{522 trajectories across 7 models}.
 
 Each trajectory step records nine fields extending the ReAct format~\citep{yao2023react}: \texttt{step\_id}, \texttt{timestamp}, \texttt{phase} (literature review, hypothesis, experiment design, execution, analysis, revision, or conclusion), \texttt{thought}, \texttt{action} (tool, input, output), \texttt{observation}, \texttt{error} (type and message), \texttt{revision\_trigger}, and \texttt{confidence}. Outcome metadata includes success, final claim, verification result, failure type, and recovery status. The complete JSON schema is in Appendix~\ref{app:schema}.
 
@@ -96,7 +93,7 @@ Five benchmark tasks are defined on this data: (1)~trajectory outcome prediction
     \centering
     \includegraphics[width=\columnwidth]{figures/fig_architecture.pdf}
     \vspace{-1.5em}
-    \caption{\footnotesize \textbf{\dataset architecture.} Three frontier models execute 124 tasks through a six-phase scientific workflow. Each step is logged as a 9-field trace. Failed steps trigger error-revision loops (dashed). The 372 trajectories form a structured corpus of AI scientific process traces.}
+    \caption{\footnotesize \textbf{\dataset architecture.} Seven models (3 frontier + 4 open-weight) execute tasks through a six-phase scientific workflow. Each step is logged as a 9-field trace. Failed steps trigger error-revision loops (dashed). The 522 trajectories form a structured corpus of AI scientific process traces.}
     \label{fig:architecture}
     \vspace{-1em}
 \end{figure}
@@ -109,9 +106,9 @@ Five benchmark tasks are defined on this data: (1)~trajectory outcome prediction
 \section{Acquisition Roadmap}
 \label{sec:roadmap}
 
-\textbf{Phase~1 (current).} 372 trajectories across 3 frontier models, 124 tasks, 4 domains. Schema, harness, and benchmark tasks complete. 30 open-source and 30 live-retrieval trajectories collected. Estimated cost: ${\sim}$\$300 API calls plus GPU cluster time. All infrastructure (harness, schema validator, analysis pipeline) is operational.
+\textbf{Phase~1 (current).} 522 trajectories across 7 models (3~frontier + 4~open-weight), 124 tasks, 4 domains. Schema, harness, and benchmark tasks complete. 30 live-retrieval variant trajectories collected. Estimated cost: ${\sim}$\$300 API + ${\sim}$\$40 Modal GPU. All infrastructure is operational.
 
-\textbf{Phase~2 (months 1--2).} Complete all 200 designed tasks across existing models. Add two open-source models (Llama~3.1, Mistral). Target: 1,000+ trajectories with 5 models, enabling robust cross-architecture comparisons and sufficient statistical power for domain-specific and difficulty-stratified analyses.
+\textbf{Phase~2 (months 1--2).} Complete all 200 tasks across all 7 models. Add Llama~3.1-8B and Gemma-2-9B. Target: 1,800+ trajectories across 9 models, enabling robust cross-architecture comparisons between open-weight and frontier models on the full task bank.
 
 \textbf{Phase~3 (months 2--3).} Human expert annotation on a 120-trajectory stratified sample. Three annotators score five axes (correctness, reasoning quality, tool use, autonomy level, error localization). Target: Krippendorff's $\alpha \geq 0.67$. LLM-based pilot already achieves $\alpha{=}0.63$--$0.82$ across axes, suggesting human agreement is attainable.
 
@@ -141,7 +138,7 @@ Five benchmark tasks are defined on this data: (1)~trajectory outcome prediction
 \section{Acceleration Potential}
 \label{sec:acceleration}
 
-\dataset enables six capabilities currently unavailable to the AI-for-science community. (1)~\emph{Process-aware agent evaluation}: benchmarking that distinguishes systematic reasoning from lucky guessing, complementing output-only metrics~\citep{wang2023scientific,gil2014amplify}. (2)~\emph{Early failure intervention}: 68.1\% of first errors occur at step~0, suggesting that monitoring initial tool invocations could prevent the majority of downstream failures. (3)~\emph{Error-type-specific training}: the discovery that Claude's errors are predominantly tool misuse while GPT-5.4's are reasoning errors implies different improvement strategies for each architecture. (4)~\emph{Process-aware reward modeling}: reward shaping over trajectories rather than outcomes, enabling RL approaches to agent training that credit good methodology independent of result. (5)~\emph{Trustworthy AI scientist auditing}: complete decision traces for governance of autonomous research systems~\citep{king2009automation,kitano2021nobel}. (6)~\emph{Reproducible open-source benchmarking}: the Qwen subset enables comparison without proprietary API keys.
+\dataset enables six capabilities currently unavailable to the AI-for-science community. (1)~\emph{Process-aware agent evaluation}: benchmarking that distinguishes systematic reasoning from lucky guessing, complementing output-only metrics~\citep{wang2023scientific,gil2014amplify}. (2)~\emph{Early failure intervention}: 68.1\% of first errors occur at step~0, suggesting that monitoring initial tool invocations could prevent the majority of downstream failures. (3)~\emph{Error-type-specific training}: the discovery that Claude's errors are predominantly tool misuse while GPT-5.4's are reasoning errors implies different improvement strategies for each architecture. (4)~\emph{Process-aware reward modeling}: reward shaping over trajectories rather than outcomes, enabling RL approaches to agent training that credit good methodology independent of result. (5)~\emph{Trustworthy AI scientist auditing}: complete decision traces for governance of autonomous research systems~\citep{king2009automation,kitano2021nobel}. (6)~\emph{Reproducible open-weight benchmarking}: 120 trajectories from 4 open-weight models (Qwen2.5-7B, Mistral-7B, Phi-3.5-mini, Qwen2.5-1.5B) enable fully reproducible comparison without proprietary API keys, bridging the open/closed evaluation gap.
 
 \dataset enables the shift from evaluating what AI scientists produce to evaluating how they reason, a prerequisite for trustworthy autonomous science.
 
@@ -234,7 +231,7 @@ Table~\ref{tab:comparison} compares \dataset with existing AI science benchmarks
 
 \subsection{Dataset Statistics}
 
-The current release comprises 372 trajectories: 124 each from GPT-5.4, Claude Opus 4.6, and Gemini 3.1 Pro, with balanced coverage across all four domains (31 per model per domain). Of these, 99.7\% reach a conclusion. Total token throughput is approximately 701K tokens. 31.2\% of trajectories contain at least one error and 34.4\% contain at least one revision.
+The current release comprises 522 trajectories: 372 from three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each) with balanced domain coverage (31 per model per domain), plus 120 from four open-weight models (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each) and 30 live-retrieval variants. Among frontier trajectories, 99.7\% reach a conclusion. 31.2\% contain at least one error and 34.4\% contain at least one revision.
 
 \begin{table}[h]
 \caption{Dataset summary statistics.}
@@ -245,8 +242,8 @@ The current release comprises 372 trajectories: 124 each from GPT-5.4, Claude Op
 \toprule
 \textbf{Metric} & \textbf{Value} \\
 \midrule
-Total trajectories & 372 \\
-Models represented & 3 (+ 1 open-source) \\
+Total trajectories & 522 \\
+Models represented & 7 (3 frontier + 4 open-weight) \\
 Domains covered & 4 \\
 Tasks executed (per model) & 124 \\
 Tasks designed (bank) & 200 \\
