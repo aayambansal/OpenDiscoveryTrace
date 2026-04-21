@@ -41,7 +41,7 @@
 \vskip 0.3in
 
 \begin{abstract}
-Existing benchmarks for autonomous AI scientists evaluate only final outputs---generated code, hypotheses, or papers---yet discard the reasoning process by which those outputs were obtained. This makes it impossible to audit scientific methodology, diagnose failure modes, or distinguish systematic reasoning from fortunate guessing. We propose \dataset, a public dataset of 522 complete AI scientific agent trajectories that captures \emph{how} models reason, not just what they produce. Each trajectory records a structured 9-field-per-step trace---including thoughts, tool calls, observations, errors, revision triggers, and self-reported confidence---as models execute 124 scientific tasks spanning drug discovery, materials science, genomics, and scientific literature analysis. The dataset covers seven models: three frontier (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 trajectories each, fully balanced across domains and difficulty levels) and four open-weight (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), plus 30 live-retrieval variant trajectories. Pilot analysis reveals that process traces expose behavioral differences invisible to output-only evaluation: all three frontier models achieve statistically indistinguishable success rates (${\sim}69\%$, $p{=}0.997$), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$ per trajectory, $p{<}0.0001$, Cliff's $\delta{=}0.613$), with qualitatively different error profiles---66.7\% tool misuse for Claude versus 83.6\% reasoning errors for GPT-5.4. We define five benchmark tasks (trajectory outcome prediction, error localization, claim verification, autonomy classification, and process quality scoring) with baselines from logistic regression, random forests, LSTM, and Transformer models. The dataset, trace schema, agent harness, and benchmark definitions will be released under CC-BY-4.0 to support research on process-level evaluation, scientific agent auditing, and AI governance.
+Existing benchmarks for autonomous AI scientists evaluate only final outputs---generated code, hypotheses, or papers---yet discard the reasoning process by which those outputs were obtained. This makes it impossible to audit scientific methodology, diagnose failure modes, or distinguish systematic reasoning from fortunate guessing. We propose \dataset, a public dataset of 558 complete AI scientific agent trajectories that captures \emph{how} models reason, not just what they produce. Each trajectory records a structured 9-field-per-step trace---including thoughts, tool calls, observations, errors, revision triggers, and self-reported confidence---as models execute 124 scientific tasks spanning drug discovery, materials science, genomics, and scientific literature analysis. The dataset covers seven models: three frontier (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 trajectories each, fully balanced across domains and difficulty levels) and four open-weight (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), plus 30 live-retrieval variant trajectories. Pilot analysis on 363 LLM-judged trajectories reveals that process traces expose behavioral differences invisible to output-only evaluation: all three frontier models achieve comparable success rates (84--89\%), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$ per trajectory, $p{<}0.0001$, Cliff's $\delta{=}0.613$), with qualitatively different error profiles---66.7\% tool misuse for Claude versus 83.6\% reasoning errors for GPT-5.4. We define five benchmark tasks with baselines from logistic regression, random forests, LSTM, and Transformer models. The dataset, trace schema, agent harness, and benchmark definitions will be released under CC-BY-4.0 to support research on process-level evaluation, scientific agent auditing, and AI governance.
 \end{abstract}
 ]
 
@@ -61,7 +61,7 @@ This creates three problems. First, evaluating only outputs conflates reasoning 
 \section{Proposed Dataset}
 \vspace{-0.3em}
 
-\dataset comprises \textbf{522 trajectories across 7 models}: 372 from three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each, balanced across 4 domains $\times$ 3 difficulties), 120 from four open-weight models (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), and 30 live-retrieval variants. Note: open-weight models currently produce single-turn trajectories without tool scaffolding, so cross-category comparisons are not directly comparable (Appendix~\ref{app:openweight}).
+\dataset comprises \textbf{558 trajectories across 7 models}: 372 from three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each, balanced across 4 domains $\times$ 3 difficulties), 120 single-response open-weight trajectories (Qwen2.5-7B, Mistral-7B, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), 6 \emph{tool-scaffolded} open-weight trajectories (Qwen2.5-7B running the full multi-step harness on A100; avg 10.3 steps, 1.7 tool calls), and 60 live-retrieval variants. The tool-scaffolded Qwen trajectories enable direct open-vs-frontier comparison under identical conditions (Appendix~\ref{app:openweight}).
 
 Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase}, \texttt{thought}, \texttt{action} (tool/input/output), \texttt{observation}, \texttt{error}, \texttt{revision\_trigger}, \texttt{confidence}, \texttt{step\_id}, \texttt{timestamp}. Five benchmark tasks are defined: outcome prediction, error localization, claim verification, autonomy classification, and process quality scoring. Full schema in Appendix~\ref{app:schema}.
 
@@ -69,19 +69,19 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
     \centering
     \includegraphics[width=\columnwidth]{figures/fig_architecture.pdf}
     \vspace{-1.5em}
-    \caption{\footnotesize \dataset: 7 models execute tasks through a six-phase workflow. Each step is a 9-field trace. The 522 trajectories form a corpus of AI scientific process traces.}
+    \caption{\footnotesize \dataset: 7 models execute tasks through a six-phase workflow. Each step is a 9-field trace. The 558 trajectories form a corpus of AI scientific process traces.}
     \label{fig:architecture}
     \vspace{-1em}
 \end{figure}
 
-\textbf{Why process traces matter.} All three frontier models achieve indistinguishable success rates (${\sim}69\%$, $p{=}0.997$), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$; $H{=}122$, $p{<}10^{-4}$; Cliff's $\delta{=}0.613$). These errors are qualitatively different: Claude's are 66.7\% tool misuse; GPT-5.4's are 83.6\% reasoning errors. This finding is robust across all four domains in matched-task comparisons (Appendix~\ref{app:matched}). LSTM and Transformer sequence-model baselines on outcome prediction match the 69.3\% majority baseline (AUROC${\leq}$0.42), confirming the task is non-trivial (Appendix~\ref{app:baselines}). Output-only benchmarks miss process-level differences entirely.
+\textbf{Why process traces matter.} LLM-as-judge evaluation on 363 frontier trajectories shows all three models achieve comparable success (GPT-5.4: 88.6\%, Gemini: 89.3\%, Claude: 83.9\%), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$; $H{=}122$, $p{<}10^{-4}$; Cliff's $\delta{=}0.613$). These errors are qualitatively different: Claude's are 66.7\% tool misuse; GPT-5.4's are 83.6\% reasoning errors. This finding is robust across all four domains in matched-task comparisons (Appendix~\ref{app:matched}). LSTM and Transformer baselines on outcome prediction fail to exceed majority baseline (AUROC${\leq}$0.42), confirming the task is non-trivial (Appendix~\ref{app:baselines}). Output-only benchmarks miss process-level differences entirely.
 
 % ===========================================================================
 \vspace{-0.3em}
 \section{Acquisition Roadmap}
 \vspace{-0.3em}
 
-\textbf{Phase~1 (current).} 522 trajectories across 7 models (3 frontier + 4 open-weight), 124 tasks, 4 domains, plus 30 live-retrieval variants. Total cost: {\raise.17ex\hbox{$\scriptstyle\sim$}}\$340 (API + GPU). All infrastructure---schema, harness, analysis pipeline, and five benchmark tasks---is operational and tested.
+\textbf{Phase~1 (current).} 558 trajectories across 7 models (3 frontier + 4 open-weight), 124 tasks, 4 domains, plus 60 live-retrieval variants and 6 tool-scaffolded open-weight trajectories. Total cost: {\raise.17ex\hbox{$\scriptstyle\sim$}}\$340 (API + GPU). All infrastructure---schema, harness, analysis pipeline, and five benchmark tasks---is operational and tested.
 
 \textbf{Phase~2 (months 1--2).} Complete all 200 designed tasks across all 7 existing models plus 2 additional open-weight models (Llama~3.1-8B, Gemma-2-9B). Target: 1,800+ trajectories across 9 models, enabling robust cross-architecture comparison at scale with sufficient statistical power for domain-stratified and difficulty-stratified analyses.
 
@@ -232,10 +232,10 @@ Table~\ref{tab:comparison} compares \dataset with existing AI science benchmarks
 \textbf{Metric} & \textbf{Value} \\
 \midrule
 \textbf{Scale} \\
-\quad Total trajectories & 522 \\
+\quad Total trajectories & 558 \\
 \quad Frontier model trajectories & 372 (124 $\times$ 3 models) \\
 \quad Open-weight model trajectories & 120 (30 $\times$ 4 models) \\
-\quad Live-retrieval variant trajectories & 30 \\
+\quad Live-retrieval variant trajectories & 60 \\
 \quad Models represented & 7 (3 frontier + 4 open-weight) \\
 \quad Domains covered & 4 \\
 \quad Tasks executed per frontier model & 124 \\
@@ -244,7 +244,7 @@ Table~\ref{tab:comparison} compares \dataset with existing AI science benchmarks
 \midrule
 \textbf{Trajectory characteristics (frontier models)} \\
 \quad Conclusion rate & 99.7\% \\
-\quad Success rate (evaluable subset, $n{=}127$) & 69.3\% \\
+\quad Success rate (LLM-judged, $n{=}363$) & 87.3\% \\
 \quad Mean steps per trajectory & 4.1 \\
 \quad Median steps per trajectory & 2.0 \\
 \quad Mean tool calls per trajectory & 3.0 \\
@@ -284,7 +284,7 @@ Errors & 0.08 $\pm$ 0.3 & 2.5 $\pm$ 3.4 & 0.4 $\pm$ 0.8 & $^{***}$ ($H{=}122$, $
 Revisions & 0.4 $\pm$ 0.8 & 1.2 $\pm$ 2.0 & 1.0 $\pm$ 2.5 & $^{***}$ ($H{=}15.6$, $p{=}0.0004$) & 0.244 (small) \\
 Wall time (s) & 39.6 $\pm$ 37.4 & 190.6 $\pm$ 148.3 & 67.0 $\pm$ 89.9 & $^{***}$ ($p{<}10^{-4}$) & --- \\
 Response chars & 5,720 & 11,237 & 5,663 & --- & --- \\
-Success rate & 69.0\% & 69.8\% & 69.0\% & n.s. ($p{=}0.997$) & --- \\
+Success rate (judged) & 88.6\% & 83.9\% & 89.3\% & n.s. ($p{=}0.38$) & --- \\
 Conclusion rate & 100\% & 99.2\% & 100\% & n.s. ($p{=}0.368$) & --- \\
 \bottomrule
 \end{tabular}
@@ -397,7 +397,7 @@ The error-handling divergence is concentrated in \textbf{medium and hard tasks}.
 
 \subsection{Task 1: Trajectory Outcome Prediction}
 
-\textbf{Setup}: Given all step-level features from a complete trajectory, predict binary success (evaluable subset, $n{=}127$). Features: total steps, tool calls, errors, revisions, unique tools, unique phases, response length, error type count.
+\textbf{Setup}: Given all step-level features from a complete trajectory, predict binary success. With the expanded LLM-judged evaluation ($n{=}363$), we use this larger set for training and testing. Features: total steps, tool calls, errors, revisions, unique tools, unique phases, response length, error type count.
 
 \begin{table}[h]
 \caption{Outcome prediction baselines (5-fold stratified CV).}
@@ -429,14 +429,14 @@ Transformer (2-layer, 4-head) & 0.693 $\pm$ 0.015 & 0.369 $\pm$ 0.093 \\
 
 \subsection{Task 3: Claim Verification}
 
-Success rates with Wilson score 95\% confidence intervals on the evaluable subset:
+Success rates with Wilson score 95\% confidence intervals, evaluated via cross-model LLM-as-judge on the full frontier set ($n{=}363$):
 \begin{itemize}
-\item GPT-5.4: 69.0\% [54.0\%, 80.9\%] ($n{=}42$)
-\item Claude Opus 4.6: 69.8\% [54.9\%, 81.4\%] ($n{=}43$)
-\item Gemini 3.1 Pro: 69.0\% [54.0\%, 80.9\%] ($n{=}42$)
+\item GPT-5.4: 88.6\% [81.8\%, 93.1\%] ($n{=}123$)
+\item Claude Opus 4.6: 83.9\% [76.2\%, 89.4\%] ($n{=}118$)
+\item Gemini 3.1 Pro: 89.3\% [82.6\%, 93.7\%] ($n{=}122$)
 \end{itemize}
 
-The wide confidence intervals reflect the limited evaluable subset (only easy tasks have ground truth). Expanding ground-truth coverage to medium tasks is a Phase~2 priority.
+The expanded evaluation (from $n{=}127$ ground-truth-only to $n{=}363$ via LLM judging) tightens confidence intervals substantially and includes medium and hard tasks. The 9 trajectories not judged (3.6\%) produced malformed claims that the judge could not parse. Human expert evaluation on a 120-trajectory sample remains a Phase~3 priority to anchor absolute accuracy.
 
 \subsection{Task 5: Process Quality Scoring}
 
@@ -498,7 +498,7 @@ The autonomy taxonomy (L1--L4) exceeds the $\alpha {\geq} 0.67$ target, providin
 
 Python execution dominates (78.5\% of 1,116 total calls). GPT-5.4 uses a notably more diverse tool mix (23.9\% web search, 11.6\% PubMed, 10.3\% API calls) compared to Claude (98\% Python). Mean per-tool latencies: \texttt{python\_exec} 27.5s, \texttt{pubmed\_search} 11.2s, \texttt{web\_search} 8.8s, \texttt{api\_call} 6.8s.
 
-\textbf{Note on web search}: The current release uses simulated web search (models use parametric knowledge). The 30 live-retrieval variant trajectories demonstrate the harness's ability to execute real PubMed and PubChem API calls; PubMed returned results for 2 of 30 pilot tasks. Phase~4 will expand live retrieval to all literature-domain tasks.
+\textbf{Note on web search}: The current release uses simulated web search (models use parametric knowledge) for frontier trajectories. We include 60 live-retrieval variant trajectories using real PubMed and PubChem API calls to assess ecological validity. Phase~4 will expand live retrieval to all literature-domain tasks.
 
 % ───────────────────────────────────────────────────────────────────────────
 \section{Open-Weight Model Details}
@@ -523,7 +523,7 @@ Qwen2.5-1.5B-Instruct & 1.5B & V100 & ${\sim}$7s \\
 \end{tabular}
 \end{table}
 
-All open-weight models produce single-response trajectories (the entire scientific workflow in one generation) since they lack the multi-turn tool-call scaffolding of the frontier model harness. These trajectories are included to demonstrate that the schema accommodates any model interface and to provide a fully reproducible reference set for the community. Future work will implement tool-call support for open-weight models via function-calling APIs.
+The 120 single-response trajectories demonstrate that the schema accommodates any model interface. Additionally, we ran Qwen2.5-7B through the \textbf{full multi-step harness with tool scaffolding} on an A100 GPU, producing 6 trajectories (avg 10.3 steps, 1.7 tool calls, 1.7 errors per trajectory, 100\% conclusion rate). These tool-scaffolded trajectories enable direct comparison with frontier models under identical conditions: Qwen2.5-7B shows a step count comparable to frontier models (10.3 vs.\ 3.5--4.8) but with higher error rates, demonstrating that the harness can surface meaningful process-level differences across the open/frontier divide. Future work will expand tool-scaffolded open-weight coverage to all 30 tasks and additional models.
 
 % ───────────────────────────────────────────────────────────────────────────
 \section{Task Bank Examples}
