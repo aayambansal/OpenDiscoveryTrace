@@ -61,7 +61,7 @@ This creates three problems. First, evaluating only outputs conflates reasoning 
 \section{Proposed Dataset}
 \vspace{-0.3em}
 
-\dataset comprises \textbf{522 trajectories across 7 models}: 372 from three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each, balanced across 4 domains $\times$ 3 difficulties), 120 from four open-weight models (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), and 30 live-retrieval variants.
+\dataset comprises \textbf{522 trajectories across 7 models}: 372 from three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each, balanced across 4 domains $\times$ 3 difficulties), 120 from four open-weight models (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), and 30 live-retrieval variants. Note: open-weight models currently produce single-turn trajectories without tool scaffolding, so cross-category comparisons are not directly comparable (Appendix~\ref{app:openweight}).
 
 Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase}, \texttt{thought}, \texttt{action} (tool/input/output), \texttt{observation}, \texttt{error}, \texttt{revision\_trigger}, \texttt{confidence}, \texttt{step\_id}, \texttt{timestamp}. Five benchmark tasks are defined: outcome prediction, error localization, claim verification, autonomy classification, and process quality scoring. Full schema in Appendix~\ref{app:schema}.
 
@@ -297,7 +297,9 @@ The central finding is that \textbf{output metrics (success rate, conclusion rat
 \label{app:failure}
 % ───────────────────────────────────────────────────────────────────────────
 
-We categorize errors into three types based on automated classification of error messages and context:
+\textbf{Note on error counts.} Two related but distinct error metrics appear throughout this paper: (i)~\texttt{total\_failures} in trajectory metadata counts \emph{steps where the harness detected an explicit error} (e.g., tool returned an exception, API timeout), and (ii)~the failure taxonomy below counts \emph{all error events}, including both explicit tool errors and keyword-detected reasoning errors (revision triggers such as ``mistake,'' ``let me correct''). The taxonomy totals are therefore higher than the per-step failure counts. Claude averages 2.5 explicit step-errors per trajectory ($124 \times 2.5 = 310$ step-errors), but the taxonomy additionally captures 152 keyword-detected reasoning errors, yielding 462 total error events.
+
+We categorize error events into three types:
 
 \begin{itemize}
 \item \textbf{Tool misuse}: Incorrect API call, wrong parameters, malformed input to a tool, or misinterpretation of tool output. Example: passing a gene name to PubChem (which expects a chemical compound name) or calling \texttt{python\_exec} with syntactically invalid code.
@@ -438,7 +440,7 @@ The wide confidence intervals reflect the limited evaluable subset (only easy ta
 
 \subsection{Task 5: Process Quality Scoring}
 
-Composite score: (efficiency + tool\_use + low\_errors + conclusion\_rate) / 4, each normalized [0,1].
+We define a composite process quality score as the unweighted mean of four normalized [0,1] components: \emph{efficiency} ($1 - \text{steps}/\text{max\_steps}$), \emph{tool diversity} (unique tools / max unique tools), \emph{low errors} ($1 - \text{errors}/\text{max\_errors}$), and \emph{conclusion reached} (binary). Equal weights are used as a deliberate baseline; optimizing weights via correlation with human quality judgments is a Phase~3 objective.
 \begin{itemize}
 \item GPT-5.4: 0.747 $\pm$ 0.008
 \item Gemini 3.1 Pro: 0.747 $\pm$ 0.011
