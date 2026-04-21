@@ -74,27 +74,33 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
     \vspace{-1em}
 \end{figure}
 
-\textbf{Why process traces matter.} All three frontier models achieve indistinguishable success rates (${\sim}69\%$, $p{=}0.997$), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$; $H{=}122$, $p{<}10^{-4}$; Cliff's $\delta{=}0.613$). These errors are qualitatively different: Claude's are 66.7\% tool misuse; GPT-5.4's are 83.6\% reasoning errors. Output-only benchmarks miss this entirely.
+\textbf{Why process traces matter.} All three frontier models achieve indistinguishable success rates (${\sim}69\%$, $p{=}0.997$), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$; $H{=}122$, $p{<}10^{-4}$; Cliff's $\delta{=}0.613$). These errors are qualitatively different: Claude's are 66.7\% tool misuse; GPT-5.4's are 83.6\% reasoning errors. This finding is robust across all four domains in matched-task comparisons (Appendix~\ref{app:matched}). LSTM and Transformer sequence-model baselines on outcome prediction match the 69.3\% majority baseline (AUROC${\leq}$0.42), confirming the task is non-trivial (Appendix~\ref{app:baselines}). Output-only benchmarks miss process-level differences entirely.
 
 % ===========================================================================
 \vspace{-0.3em}
 \section{Acquisition Roadmap}
 \vspace{-0.3em}
 
-\textbf{Phase~1 (current).} 522 trajectories, 7 models, 124 tasks, 4 domains. Cost: \$300 API + \$40 GPU. Schema, harness, benchmarks operational.
-\textbf{Phase~2 (months 1--2).} All 200 tasks $\times$ 9 models. Target: 1,800+ trajectories.
-\textbf{Phase~3 (months 2--3).} Human annotation on 120-trajectory sample (3 annotators, 5 axes; LLM pilot achieves $\alpha{=}0.63$--$0.82$).
-\textbf{Phase~4 (months 3--6).} Live retrieval for literature tasks; pilot ELN integration~\citep{dirnagl2016eln}.
-\textbf{Sustainability.} Semver-versioned schema on HuggingFace with DOI. Open-source harness. Annual model refresh.
+\textbf{Phase~1 (current).} 522 trajectories across 7 models (3 frontier + 4 open-weight), 124 tasks, 4 domains, plus 30 live-retrieval variants. Total cost: {\raise.17ex\hbox{$\scriptstyle\sim$}}\$340 (API + GPU). All infrastructure---schema, harness, analysis pipeline, and five benchmark tasks---is operational and tested.
+
+\textbf{Phase~2 (months 1--2).} Complete all 200 designed tasks across all 7 existing models plus 2 additional open-weight models (Llama~3.1-8B, Gemma-2-9B). Target: 1,800+ trajectories across 9 models, enabling robust cross-architecture comparison at scale with sufficient statistical power for domain-stratified and difficulty-stratified analyses.
+
+\textbf{Phase~3 (months 2--3).} Human expert annotation on a 120-trajectory stratified sample. Three domain-expert annotators independently score five axes: correctness, reasoning quality, tool use efficiency, autonomy level (L1--L4), and error step localization. Target: Krippendorff's $\alpha \geq 0.67$. An LLM-based annotation pilot already achieves $\alpha{=}0.63$--$0.82$ across axes (Appendix~\ref{app:iaa}), suggesting human agreement is attainable.
+
+\textbf{Phase~4 (months 3--6).} Live retrieval integration for all literature-domain tasks via PubMed and PubChem APIs (a 30-task pilot is already included). ELN integration pilot for physical-lab trace capture~\citep{dirnagl2016eln,abolhasani2023selfdriving}, extending the dataset from computational-only to hybrid computational-physical settings.
+
+\textbf{Sustainability.} Semver-versioned schema (v1.0 = current release). Dataset hosted on a public repository with DOI for citability. Open-source harness enabling community-contributed trajectories. Annual refresh cycles incorporating new frontier and open-weight models as they become available.
 
 % ===========================================================================
 \vspace{-0.3em}
 \section{Metadata, Governance \& Safety}
 \vspace{-0.3em}
 
-\textbf{License:} CC-BY-4.0. \textbf{Format:} Self-contained JSON per trajectory. Datasheet per~\citet{gebru2021datasheets}.
-\textbf{Release tiers:} (1)~Full traces where provider ToS permits; (2)~abstracted summaries (phase transitions, tool calls, errors) preserving ${>}90\%$ analytical utility.
-\textbf{Privacy:} No PII; public scientific knowledge only.
+\textbf{License and format.} CC-BY-4.0. Each trajectory is a self-contained JSON document following the 9-field schema (Appendix~\ref{app:schema}), with per-step and aggregate metadata. A datasheet following~\citet{gebru2021datasheets} accompanies the release documenting collection methodology, intended uses, and known limitations.
+
+\textbf{Release tiers.} (1)~Full traces where provider terms of service permit redistribution of model outputs. (2)~Abstracted state summaries (phase transitions, tool calls, error events, revision counts---without verbatim model reasoning) where full release is restricted. Abstracted summaries preserve ${>}90\%$ of analytical utility for error localization, process quality scoring, and autonomy classification, since these tasks depend on structured metadata rather than raw text.
+
+\textbf{Privacy:} No PII; all tasks use public scientific knowledge. No dual-use content.
 \textbf{Splits:} Task-level 80/20 train/test, domain-stratified, no leakage~\citep{kapoor2023leakage}. Evaluation follows HELM~\citep{liang2023helm}.
 
 % ===========================================================================
@@ -102,7 +108,9 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
 \section{Acceleration Potential}
 \vspace{-0.3em}
 
-\dataset enables: (1)~process-aware evaluation that distinguishes reasoning from luck~\citep{wang2023scientific}; (2)~early failure intervention (68.1\% of first errors at step 0); (3)~error-type-specific model improvement; (4)~process-aware reward modeling for RL; (5)~trustworthy AI scientist auditing~\citep{king2009automation}; (6)~reproducible open-weight benchmarking (120 trajectories from 4 models, no API keys required).
+\dataset enables six capabilities currently unavailable to the community. (1)~\emph{Process-aware agent evaluation}: benchmarking that distinguishes systematic reasoning from lucky guessing, complementing output-only metrics~\citep{wang2023scientific,gil2014amplify}. (2)~\emph{Early failure intervention}: our finding that 68.1\% of first errors occur at step~0 (the initial tool invocation) suggests that monitoring early trajectory steps could prevent the majority of downstream failures. (3)~\emph{Error-type-specific model improvement}: the discovery that Claude's errors are predominantly tool misuse while GPT-5.4's are reasoning errors implies different training strategies for each architecture. (4)~\emph{Process-aware reward modeling}: reward shaping over full trajectories rather than terminal outcomes, enabling RL approaches that credit sound methodology independent of final result. (5)~\emph{Trustworthy AI scientist auditing}: complete decision traces for governance of autonomous research systems, a prerequisite as AI agents move toward safety-critical scientific domains~\citep{king2009automation,kitano2021nobel}. (6)~\emph{Reproducible open-weight benchmarking}: 120 trajectories from 4 open-weight models enable fully reproducible comparison without proprietary API access, bridging the evaluation gap between open and closed models.
+
+\dataset shifts evaluation from \emph{what} AI scientists produce to \emph{how} they reason---a prerequisite for trustworthy autonomous science.
 
 % Force references to start on a new page
 \clearpage
@@ -577,18 +585,16 @@ The agent harness is a Python script (\texttt{agent\_harness.py}) that orchestra
 \textbf{Sensitivity to harness design}: The 6-phase prompt, 30-step cap, and tool suite are design choices that affect trajectory characteristics. Models may collapse phases when the prompt encourages comprehensive responses (as observed with Claude's single-response pattern in our earlier pilot). Future work should systematically vary these parameters (step limits of 10/30/60, alternative prompt structures, expanded tool suites) to quantify sensitivity.
 
 % ───────────────────────────────────────────────────────────────────────────
-\section{Access and Reproducibility}
+\section{Reproducibility}
 \label{app:access}
 % ───────────────────────────────────────────────────────────────────────────
 
-\textbf{Code}: \texttt{github.com/aayambansal/OpenDiscoveryTrace} (MIT license for code).
+Code, data, and the complete task bank will be publicly released upon acceptance. The release includes an agent harness script for trajectory generation, analysis pipelines for reproducing all figures and statistics, and the full set of 522 trajectory JSON files.
 
-\textbf{Data}: \texttt{huggingface.co/datasets/aayambansall/OpenDiscoveryTrace} (CC-BY-4.0 for data).
+\textbf{Reproducing frontier trajectories} requires API keys for the three frontier model providers. The harness script accepts a \texttt{--model} flag to select any supported model and a \texttt{--max-tasks} flag to control the number of tasks.
 
-\textbf{Reproducing frontier trajectories}: Requires API keys for OpenAI (GPT-5.4), Anthropic (Claude Opus 4.6), and Google (Gemini 3.1 Pro). Run: \texttt{python src/agent\_harness.py --model gpt-5.4}.
+\textbf{Reproducing open-weight trajectories} requires only a single GPU (V100 16GB or better) and access to open-weight model weights. No proprietary API keys are needed, enabling fully independent replication.
 
-\textbf{Reproducing open-weight trajectories}: Requires only a GPU (V100 16GB or better) and HuggingFace model access. No API keys needed. Run: \texttt{python src/run\_opensource.py}.
-
-\textbf{Running analysis}: \texttt{python src/analyze\_trajectories.py} regenerates all figures and statistics from the trajectory JSON files.
+\textbf{Running analysis}: A single script regenerates all figures, statistical tables, and benchmark baselines from the raw trajectory JSON files, ensuring end-to-end reproducibility of all reported results.
 
 \end{document}
