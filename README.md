@@ -2,136 +2,168 @@
 
 **Process Traces for Evaluating AI Scientist Workflows**
 
-*Submitted to the AI for Science Workshop Dataset Competition (ICML 2026)*
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Dataset on HF](https://img.shields.io/badge/HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
 
 ---
 
-OpenDiscoveryTrace is a dataset of **372 complete AI scientific agent trajectories** capturing how frontier language models reason through scientific tasks — not just what they produce.
+## Overview
 
-Each trajectory records a **9-field-per-step trace** (thoughts, tool calls, observations, errors, revisions, confidence) as models execute tasks across drug discovery, materials science, genomics, and scientific literature analysis.
+Existing benchmarks for AI scientific agents evaluate only final outputs. OpenDiscoveryTrace captures the **full reasoning process** — every thought, tool call, error, revision, and confidence estimate — as models work through scientific tasks.
 
-## Key Finding
+**522 trajectories** across **7 models** (3 frontier, 4 open-weight), **124 tasks** in 4 science domains.
 
-All three frontier models achieve indistinguishable success rates (~69%), yet **Claude Opus 4.6 produces 30x more errors than GPT-5.4** (2.5 vs 0.08 per trajectory, *p* < 0.0001, Cliff's δ = 0.613) while arriving at the same answers. These errors are qualitatively different: Claude's are 66.7% tool misuse; GPT-5.4's are 83.6% reasoning errors.
+### Headline Result
 
-**Process traces expose this. Output-only benchmarks cannot.**
+All frontier models achieve the same success rate (~69%), yet Claude Opus 4.6 makes **30x more errors** than GPT-5.4 — predominantly tool misuse (66.7%) vs. reasoning errors (83.6%). Output-only benchmarks miss this entirely.
 
-## Dataset Summary
-
-| | |
-|---|---|
-| **Trajectories** | 372 (124 per model, balanced) |
-| **Models** | GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro |
-| **Open-source** | + 30 Qwen2.5-1.5B trajectories |
-| **Tasks** | 124 executed across 4 domains × 3 difficulties |
-| **Domains** | Drug Discovery, Materials Science, Genomics, Literature |
-| **Schema** | 9 fields per step (ReAct-extended) |
-| **Benchmark Tasks** | 5 defined with baselines |
-| **License** | CC-BY-4.0 |
+---
 
 ## Repository Structure
 
 ```
 OpenDiscoveryTrace/
-├── README.md
-├── LICENSE                          # CC-BY-4.0
-├── requirements.txt
 │
-├── data/
-│   ├── task_bank.json               # 200 scientific tasks (124 executed)
-│   ├── trajectories_sample/         # 9 sample trajectories (3 tasks × 3 models)
-│   └── trajectories_opensource_sample/  # Qwen2.5-1.5B sample
+├── paper/                          # Submission
+│   ├── paper.pdf                   #   Competition proposal (2pp + appendix)
+│   ├── paper.tex                   #   LaTeX source
+│   ├── references.bib              #   Bibliography
+│   ├── table_comparison.tex        #   Benchmark comparison table
+│   ├── figures/                    #   Figures used in paper
+│   └── supplementary/              #   Full-length analysis paper (15pp)
 │
 ├── src/
-│   ├── agent_harness.py             # Trajectory generation pipeline
-│   ├── analyze_trajectories.py      # Analysis and figure generation
-│   ├── reviewer_analysis.py         # Extended analysis (baselines, taxonomy, IAA)
-│   ├── implement_four.py            # IAA, sequence baselines, open-source, live retrieval
-│   └── run_opensource.py            # Open-source model trajectory generation
+│   ├── harness/                    # Trajectory generation
+│   │   ├── agent_harness.py        #   Main harness: runs models through tasks
+│   │   └── run_opensource.py       #   Open-weight model runner (local GPU)
+│   ├── analysis/                   # Analysis pipelines
+│   │   ├── analyze_trajectories.py #   Core stats + figures
+│   │   └── reviewer_analysis.py    #   Extended analysis (taxonomy, baselines)
+│   └── baselines/                  # Benchmark task baselines
+│       └── implement_four.py       #   IAA, sequence models, live retrieval
 │
-├── analysis/
-│   ├── analysis_results.json        # Core dataset statistics
-│   ├── reviewer_analysis_results.json  # Extended analysis results
-│   └── four_additions_results.json  # IAA, sequence baselines, live retrieval results
+├── data/
+│   ├── task_bank.json              # 200 scientific tasks (124 executed)
+│   └── samples/                    # Sample trajectories (full set on HuggingFace)
+│       ├── frontier/               #   3 tasks × 3 frontier models
+│       └── open_weight/            #   1 task × Qwen2.5-1.5B
 │
-├── figures/                         # Publication-quality figures (PDF)
+├── results/
+│   ├── statistics/                 # Raw analysis outputs (JSON)
+│   │   ├── analysis_results.json
+│   │   ├── reviewer_analysis_results.json
+│   │   └── four_additions_results.json
+│   └── figures/                    # All generated figures (PDF)
 │
-├── paper/
-│   ├── paper.tex                    # 2-page dataset proposal (competition version)
-│   ├── paper.pdf                    # Compiled PDF
-│   ├── references.bib
-│   ├── table_comparison.tex
-│   ├── figures/                     # Paper figure copies
-│   └── full_version/               # Full 15-page analysis paper (archived)
+├── research_notes/                 # Research process documentation
+│   ├── literature-review.md        #   60+ papers across 5 facets
+│   ├── reasoning.md                #   Hypothesis deliberation
+│   ├── methodology.md              #   Pre-analysis plan
+│   └── synthesis.md                #   Results interpretation
 │
-├── literature-review.md             # 60+ papers across 5 facets
-├── reasoning.md                     # Research design deliberation
-├── methodology.md                   # Pre-analysis plan
-└── synthesis.md                     # Results interpretation
+├── LICENSE                         # CC-BY-4.0
+├── requirements.txt
+└── README.md
 ```
+
+---
 
 ## Quick Start
 
-### View sample trajectories
+### Browse a trajectory
+
 ```python
 import json
-with open("data/trajectories_sample/dd_e01_gpt-5.4.json") as f:
+
+with open("data/samples/frontier/dd_e01_gpt-5.4.json") as f:
     traj = json.load(f)
-print(f"Task: {traj['prompt'][:100]}")
-print(f"Steps: {traj['metadata']['total_steps']}")
-print(f"Errors: {traj['metadata']['total_failures']}")
-print(f"Claim: {traj['outcome']['final_claim'][:200]}")
+
+print(f"Task:    {traj['prompt'][:80]}...")
+print(f"Model:   {traj['model']}")
+print(f"Steps:   {traj['metadata']['total_steps']}")
+print(f"Errors:  {traj['metadata']['total_failures']}")
+print(f"Claim:   {traj['outcome']['final_claim'][:120]}...")
 ```
 
-### Run analysis on sample data
+### Run analysis
+
 ```bash
 pip install -r requirements.txt
-cd src && python analyze_trajectories.py
+python src/analysis/analyze_trajectories.py
 ```
 
 ### Generate new trajectories
+
 ```bash
-export OPENAI_API_KEY=...
-export ANTHROPIC_API_KEY=...
-export GEMINI_API_KEY=...
-python src/agent_harness.py --model gpt-5.4 --max-tasks 10 --concurrency 2
+# Frontier models (requires API keys)
+python src/harness/agent_harness.py --model gpt-5.4 --max-tasks 10
+
+# Open-weight models (requires GPU, no API keys)
+python src/harness/run_opensource.py
 ```
+
+---
 
 ## Trace Schema
 
-Each step records 9 fields:
+Each step in a trajectory records 9 fields:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `step_id` | int | Step index |
-| `timestamp` | ISO 8601 | When the step occurred |
-| `phase` | enum | literature_review, hypothesis, experiment_design, execution, analysis, revision, conclusion |
-| `thought` | string | Agent's reasoning |
-| `action` | object | Tool call (type, tool, input, output) |
-| `observation` | string | Result of the action |
-| `error` | object | Error state (occurred, type, message) |
-| `revision_trigger` | string | What prompted a strategy change |
-| `confidence` | float | Agent's self-reported certainty [0, 1] |
+| Field | Description |
+|-------|-------------|
+| `step_id` | Sequential step index |
+| `timestamp` | ISO 8601 UTC |
+| `phase` | Scientific workflow phase (literature review → hypothesis → experiment → execution → analysis → conclusion) |
+| `thought` | Model's reasoning |
+| `action` | Tool call details (type, tool name, input, output) |
+| `observation` | Processed result of the action |
+| `error` | Error state (occurred, type, message) |
+| `revision_trigger` | What prompted a strategy change |
+| `confidence` | Self-reported certainty \[0, 1\] |
+
+Full JSON schema in [`paper/paper.tex`](paper/paper.tex) Appendix A.
+
+---
+
+## Models
+
+| Model | Type | Trajectories | Tasks |
+|-------|------|-------------|-------|
+| GPT-5.4 | Frontier | 124 | 124 |
+| Claude Opus 4.6 | Frontier | 124 | 124 |
+| Gemini 3.1 Pro | Frontier | 124 | 124 |
+| Qwen2.5-7B-Instruct | Open-weight | 30 | 30 |
+| Mistral-7B-v0.3 | Open-weight | 30 | 30 |
+| Phi-3.5-mini-instruct | Open-weight | 30 | 30 |
+| Qwen2.5-1.5B-Instruct | Open-weight | 30 | 30 |
+
+---
 
 ## Benchmark Tasks
 
-1. **Trajectory Outcome Prediction** — Predict success from early steps
-2. **Error Localization** — Identify where reasoning went wrong
-3. **Claim Verification** — Verify correctness of final claims
-4. **Autonomy Level Classification** — Classify L1-L4 autonomy
-5. **Process Quality Scoring** — Multi-axis trajectory quality
+1. **Trajectory Outcome Prediction** — predict success from step features
+2. **Error Localization** — identify the step where reasoning went wrong
+3. **Claim Verification** — verify correctness of final claims
+4. **Autonomy Classification** — classify L1–L4 autonomy levels
+5. **Process Quality Scoring** — multi-axis trajectory quality
+
+Baselines in [`results/statistics/`](results/statistics/) and Appendix H of the paper.
+
+---
 
 ## Full Dataset
 
-The complete 372-trajectory dataset is available on HuggingFace:
+Sample trajectories are included in `data/samples/`. The complete 522-trajectory dataset is on HuggingFace:
 
-**[huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)** 
+**[huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)**
+
+---
 
 ## Citation
 
 ```bibtex
 @inproceedings{opendiscoverytrace2026,
-  title     = {OpenDiscoveryTrace: Process Traces for Evaluating AI Scientist Workflows},
+  title     = {OpenDiscoveryTrace: Process Traces for Evaluating
+               AI Scientist Workflows},
   author    = {Anonymous},
   booktitle = {AI for Science Workshop, ICML},
   year      = {2026},
@@ -141,4 +173,4 @@ The complete 372-trajectory dataset is available on HuggingFace:
 
 ## License
 
-Dataset and code released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).
+Code: MIT. Data and paper: [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).
