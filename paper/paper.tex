@@ -104,10 +104,13 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
 
 \dataset enables: (1)~process-aware evaluation that distinguishes reasoning from luck~\citep{wang2023scientific}; (2)~early failure intervention (68.1\% of first errors at step 0); (3)~error-type-specific model improvement; (4)~process-aware reward modeling for RL; (5)~trustworthy AI scientist auditing~\citep{king2009automation}; (6)~reproducible open-weight benchmarking (120 trajectories from 4 models, no API keys required).
 
-% ===========================================================================
+% Force references to start on a new page
+\clearpage
 \bibliography{references}
 \bibliographystyle{icml2026}
 
+% ===========================================================================
+% APPENDIX — comprehensive details for reproducibility
 % ===========================================================================
 \clearpage
 \onecolumn
@@ -116,88 +119,476 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
 \setcounter{section}{0}
 \renewcommand{\thesection}{\Alph{section}}
 
-\section{Full Trace Schema}
+% ───────────────────────────────────────────────────────────────────────────
+\section{Complete Trace Schema}
 \label{app:schema}
+% ───────────────────────────────────────────────────────────────────────────
 
-\begin{lstlisting}[style=json, caption={Complete \dataset trace schema.}, label=lst:schema]
+Every trajectory in \dataset is stored as a self-contained JSON file.
+The schema below defines every field. Fields marked \texttt{*} are present in every trajectory; others may be \texttt{null} for certain steps.
+
+\begin{lstlisting}[style=json, caption={Complete \dataset JSON schema for a single trajectory.}, label=lst:schema]
 {
-  "task_id": "string",
-  "domain": "drug_discovery | materials_science | genomics | literature",
-  "difficulty": "easy | medium | hard",
-  "prompt": "string",
-  "model": "gpt-5.4 | claude-opus-4-6 | gemini-3.1-pro | ...",
+  "trajectory_id": "string*  (unique: {task_id}_{model})",
+  "task_id":       "string*  (e.g. dd_e01, ms_m03, gn_h02, lt_m05)",
+  "domain":        "string*  (drug_discovery | materials_science
+                              | genomics | literature)",
+  "difficulty":    "string*  (easy | medium | hard)",
+  "prompt":        "string*  (the scientific task given to the model)",
+  "ground_truth":  "string   (expected answer for easy tasks; null for
+                              medium/hard open-ended tasks)",
+  "model":         "string*  (gpt-5.4 | claude-opus-4.6 |
+                              gemini-3.1-pro | qwen2.5-7b |
+                              mistral-7b-v0.3 | phi-3.5-mini |
+                              qwen2.5-1.5b)",
+  "open_weight":   "boolean  (true for open-weight models)",
+
   "trajectory": [
     {
-      "step_id": "integer", "timestamp": "ISO8601",
-      "phase": "literature_review | hypothesis | experiment_design
-               | execution | analysis | revision | conclusion",
-      "thought": "string",
-      "action": {"type": "string", "tool": "string", "input": {}, "output": {}},
-      "observation": "string",
-      "error": {"occurred": "boolean", "type": "string", "message": "string"},
-      "revision_trigger": "string | null",
-      "confidence": "float [0, 1]"
+      "step_id":    "integer* (0-indexed sequential step number)",
+      "timestamp":  "string*  (ISO 8601 UTC, e.g. 2026-04-16T14:30:00Z)",
+      "phase":      "string*  (literature_review | hypothesis |
+                               experiment_design | execution |
+                               analysis | revision | conclusion)",
+      "thought":    "string*  (model's reasoning at this step)",
+      "action": {
+        "type":   "string*  (tool_call | reasoning | conclude)",
+        "tool":   "string   (python_exec | web_search |
+                             pubmed_search | api_call | none)",
+        "input":  "string   (argument passed to the tool)",
+        "output": "string   (raw output returned by the tool)"
+      },
+      "observation":      "string  (processed observation from action)",
+      "error": {
+        "occurred": "boolean* (true if this step had an error)",
+        "type":     "string   (tool_error | api_error | timeout |
+                               parse_error | null)",
+        "message":  "string   (error message text; null if no error)"
+      },
+      "revision_trigger": "string  (what prompted a strategy change;
+                                    null if no revision at this step)",
+      "confidence":       "float   (model's self-reported certainty
+                                    [0.0, 1.0]; null if not stated)",
+      "raw_response":     "string  (first 3000 chars of model output)",
+      "wall_time":        "float   (seconds for this step)"
     }
   ],
+
   "outcome": {
-    "success": "boolean", "final_claim": "string",
-    "verification": {"method": "string", "result": "string", "score": "float"},
-    "failure_type": "string | null", "recovery_attempted": "boolean"
+    "success":            "boolean (true/false/null; null = not yet
+                                    evaluated against ground truth)",
+    "final_claim":        "string  (model's concluding statement)",
+    "confidence":         "float   (confidence on the final claim)",
+    "verification": {
+      "method":  "string  (ground_truth_match | llm_judge | pending)",
+      "result":  "string  (correct | incorrect | partial | pending)",
+      "score":   "float   (0.0--1.0 verification score)"
+    },
+    "failure_type":       "string  (from failure taxonomy; null if
+                                    no failure)",
+    "recovery_attempted": "boolean (true if the model tried to recover
+                                    from an error)",
+    "recovery_successful":"boolean (true if recovery led to success;
+                                    null if no recovery attempted)"
   },
+
   "metadata": {
-    "total_steps": "integer", "total_tokens": "integer",
-    "total_tool_calls": "integer", "total_failures": "integer",
-    "total_revisions": "integer", "wall_time_seconds": "float"
+    "total_steps":       "integer* (number of steps in trajectory)",
+    "total_tokens_est":  "integer  (estimated token count)",
+    "total_tool_calls":  "integer* (number of tool invocations)",
+    "total_failures":    "integer* (number of steps with errors)",
+    "total_revisions":   "integer* (number of strategy revisions)",
+    "wall_time_seconds": "float*   (total wall-clock time)",
+    "max_steps_reached": "boolean  (true if hit 30-step limit)",
+    "model_version":     "string   (exact model ID used)",
+    "temperature":       "float    (sampling temperature; 0.0 for
+                                    frontier, varies for open-weight)",
+    "collection_timestamp":"string (ISO 8601 collection date)"
   }
 }
 \end{lstlisting}
 
-\section{Benchmark Comparison}
+% ───────────────────────────────────────────────────────────────────────────
+\section{Benchmark Comparison with Existing Datasets}
 \label{app:comparison}
+% ───────────────────────────────────────────────────────────────────────────
+
 \input{table_comparison}
 
-\section{Pilot Analysis Details}
-\label{app:pilot}
+Table~\ref{tab:comparison} compares \dataset with existing AI science benchmarks and agent trajectory datasets. The key distinction is that \dataset is the only resource providing structured process traces with error logging, revision tracking, and multi-phase scientific workflow annotation alongside final output evaluation. Most existing benchmarks evaluate final artifacts only; agent trajectory datasets like ToolBench and MINT record traces but exclusively for web or software domains, not science.
 
-\subsection{Dataset Statistics}
-522 trajectories: 372 frontier (124 each from GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro) + 120 open-weight (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each) + 30 live-retrieval. 99.7\% reach conclusions. 31.2\% contain errors; 34.4\% contain revisions.
+% ───────────────────────────────────────────────────────────────────────────
+\section{Dataset Summary Statistics}
+\label{app:stats}
+% ───────────────────────────────────────────────────────────────────────────
 
 \begin{table}[h]
-\caption{Inter-model comparison ($n{=}124$ per frontier model). $^{***}$~$p{<}0.001$, n.s.~not significant.}
-\label{tab:model_detailed}
+\caption{Complete dataset statistics.}
+\label{tab:stats}
 \centering\small
-\begin{tabular}{lccccc}
+\begin{tabular}{lc}
 \toprule
-\textbf{Metric} & \textbf{GPT-5.4} & \textbf{Claude 4.6} & \textbf{Gemini 3.1} & \textbf{Sig.} & \textbf{$\delta$} \\
+\textbf{Metric} & \textbf{Value} \\
 \midrule
-Steps & 3.5$\pm$3.5 & 4.1$\pm$4.0 & 4.8$\pm$5.4 & n.s. & 0.16 \\
-Tools & 2.5$\pm$3.5 & 2.8$\pm$3.2 & 3.8$\pm$5.2 & n.s. & 0.15 \\
-Errors & 0.08$\pm$0.3 & 2.5$\pm$3.4 & 0.4$\pm$0.8 & $^{***}$ & 0.61 \\
-Revisions & 0.4$\pm$0.8 & 1.2$\pm$2.0 & 1.0$\pm$2.5 & $^{***}$ & 0.24 \\
-Success & 69.0\% & 69.8\% & 69.0\% & n.s. & --- \\
+\textbf{Scale} \\
+\quad Total trajectories & 522 \\
+\quad Frontier model trajectories & 372 (124 $\times$ 3 models) \\
+\quad Open-weight model trajectories & 120 (30 $\times$ 4 models) \\
+\quad Live-retrieval variant trajectories & 30 \\
+\quad Models represented & 7 (3 frontier + 4 open-weight) \\
+\quad Domains covered & 4 \\
+\quad Tasks executed per frontier model & 124 \\
+\quad Tasks in full bank (designed) & 200 \\
+\quad Tasks per domain per frontier model & 31 \\
+\midrule
+\textbf{Trajectory characteristics (frontier models)} \\
+\quad Conclusion rate & 99.7\% \\
+\quad Success rate (evaluable subset, $n{=}127$) & 69.3\% \\
+\quad Mean steps per trajectory & 4.1 \\
+\quad Median steps per trajectory & 2.0 \\
+\quad Mean tool calls per trajectory & 3.0 \\
+\quad Mean errors per trajectory & 1.0 \\
+\quad Mean revisions per trajectory & 0.87 \\
+\quad Mean wall time (seconds) & 99.1 \\
+\quad Trajectories with $\geq 1$ error & 31.2\% \\
+\quad Trajectories with $\geq 1$ revision & 34.4\% \\
+\midrule
+\textbf{Token and cost estimates} \\
+\quad Estimated total tokens (frontier) & ${\sim}$701K \\
+\quad Mean response chars per trajectory (Claude) & 11,237 \\
+\quad Mean response chars per trajectory (GPT-5.4) & 5,720 \\
+\quad Mean response chars per trajectory (Gemini) & 5,663 \\
+\quad API cost (frontier models) & ${\sim}$\$300 \\
+\quad GPU cost (open-weight models, Modal A10G) & ${\sim}$\$40 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Failure Taxonomy}
-Claude: 462 errors (66.7\% tool misuse, 33.1\% reasoning, 0.2\% hallucination). Gemini: 165 errors (72.1\% reasoning, 27.9\% tool). GPT-5.4: 61 errors (83.6\% reasoning, 16.4\% tool).
+% ───────────────────────────────────────────────────────────────────────────
+\section{Inter-Model Comparison}
+\label{app:models}
+% ───────────────────────────────────────────────────────────────────────────
 
-\subsection{Matched-Task Within-Domain Results}
-Error divergence is significant in every domain ($p{<}0.0001$); step counts are non-significant in every domain.
+\begin{table*}[h]
+\caption{Complete inter-model comparison for frontier models ($n{=}124$ per model). All tests are Kruskal-Wallis (equivalent to Mann-Whitney $U$ for pairwise). Cliff's $\delta$ effect sizes: negligible ($<$0.147), small (0.147--0.33), medium (0.33--0.474), large ($>$0.474). Values: mean $\pm$ SD. $^{***}$~$p{<}0.001$, $^{**}$~$p{<}0.01$, $^{*}$~$p{<}0.05$, n.s.~not significant.}
+\label{tab:model_detailed}
+\centering\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Metric} & \textbf{GPT-5.4} & \textbf{Claude Opus 4.6} & \textbf{Gemini 3.1 Pro} & \textbf{Significance} & \textbf{Cliff's $\delta$ (max pair)} \\
+\midrule
+Total steps & 3.5 $\pm$ 3.5 & 4.1 $\pm$ 4.0 & 4.8 $\pm$ 5.4 & n.s. ($p{=}0.158$) & 0.160 (small) \\
+Tool calls & 2.5 $\pm$ 3.5 & 2.8 $\pm$ 3.2 & 3.8 $\pm$ 5.2 & n.s. ($p{=}0.214$) & 0.149 (small) \\
+Errors & 0.08 $\pm$ 0.3 & 2.5 $\pm$ 3.4 & 0.4 $\pm$ 0.8 & $^{***}$ ($H{=}122$, $p{<}10^{-4}$) & 0.613 (large) \\
+Revisions & 0.4 $\pm$ 0.8 & 1.2 $\pm$ 2.0 & 1.0 $\pm$ 2.5 & $^{***}$ ($H{=}15.6$, $p{=}0.0004$) & 0.244 (small) \\
+Wall time (s) & 39.6 $\pm$ 37.4 & 190.6 $\pm$ 148.3 & 67.0 $\pm$ 89.9 & $^{***}$ ($p{<}10^{-4}$) & --- \\
+Response chars & 5,720 & 11,237 & 5,663 & --- & --- \\
+Success rate & 69.0\% & 69.8\% & 69.0\% & n.s. ($p{=}0.997$) & --- \\
+Conclusion rate & 100\% & 99.2\% & 100\% & n.s. ($p{=}0.368$) & --- \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
-\subsection{Sequence-Model Baselines}
-LSTM: Acc=0.693$\pm$0.015, AUROC=0.422. Transformer: Acc=0.693$\pm$0.015, AUROC=0.369. Both match majority baseline.
+The central finding is that \textbf{output metrics (success rate, conclusion rate) show no significant differences}, while \textbf{process metrics (errors, revisions, wall time) show highly significant differences} with large effect sizes. An output-only benchmark would rate these three models as interchangeable; our process traces reveal fundamentally different error-handling behaviors.
 
-\subsection{LLM-Based Inter-Annotator Agreement}
-60-trajectory sample: correctness $\alpha{=}0.629$, reasoning $\alpha{=}0.711$, tool use $\alpha{=}0.717$, autonomy $\alpha{=}0.820$.
+% ───────────────────────────────────────────────────────────────────────────
+\section{Failure Taxonomy}
+\label{app:failure}
+% ───────────────────────────────────────────────────────────────────────────
 
-\subsection{Task Examples}
-\textbf{Drug Discovery.} Easy: ``Predict LogP of ibuprofen.'' Medium: ``Find top EGFR kinase inhibitors from ChEMBL, predict ADMET.'' Hard: ``Propose CDK4/6 inhibitor resistance mechanism in TNBC.''
+We categorize errors into three types based on automated classification of error messages and context:
 
-\textbf{Materials Science.} Easy: ``Band gap of silicon.'' Medium: ``Compare perovskite stability for PV.'' Hard: ``Design HEA synthesis for ductility.''
+\begin{itemize}
+\item \textbf{Tool misuse}: Incorrect API call, wrong parameters, malformed input to a tool, or misinterpretation of tool output. Example: passing a gene name to PubChem (which expects a chemical compound name) or calling \texttt{python\_exec} with syntactically invalid code.
+\item \textbf{Reasoning error}: Logical fallacy, incorrect inference, flawed calculation, or unsupported conclusion. Detected via keyword-based revision triggers (``mistake'', ``reconsider'', ``let me correct'').
+\item \textbf{Hallucination}: Agent fabricates data, citations, or tool outputs. Rare in our data (1 instance across 688 total errors).
+\end{itemize}
 
-\textbf{Genomics.} Easy: ``TP53 protein length.'' Medium: ``KEGG enrichment for HCC genes.'' Hard: ``BRAF V600E across cancer types.''
+\begin{table}[h]
+\caption{Failure taxonomy breakdown by model.}
+\label{tab:failure_taxonomy}
+\centering\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Total Errors} & \textbf{Tool Misuse} & \textbf{Reasoning Error} \\
+\midrule
+Claude Opus 4.6 & 462 & 308 (66.7\%) & 153 (33.1\%) \\
+Gemini 3.1 Pro & 165 & 46 (27.9\%) & 119 (72.1\%) \\
+GPT-5.4 & 61 & 10 (16.4\%) & 51 (83.6\%) \\
+\midrule
+\textbf{Total} & \textbf{688} & \textbf{364 (52.9\%)} & \textbf{323 (46.9\%)} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\textbf{Literature.} Easy: ``AlphaFold2 CASP14 accuracy.'' Medium: ``CRISPR off-target methods review.'' Hard: ``Gut microbiome-immunotherapy contradiction.''
+\textbf{Key insight}: Models differ not only in \emph{how many} errors they make but in \emph{what kind}. Claude's errors are predominantly tool misuse --- it attempts more complex tool interactions and fails more often at the tool interface. GPT-5.4 makes far fewer errors overall, and when it does err, the failures are reasoning-level rather than tool-level. This distinction has direct implications for model improvement: Claude would benefit most from better tool-use training, while GPT-5.4's rarer errors require reasoning-level interventions.
+
+\textbf{Limitation}: Error classification uses automated heuristics (keyword matching on error messages and revision triggers). This may undercount implicit reasoning errors that do not trigger explicit revision keywords. Future work will validate against human-labeled error types on the annotated subset.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Matched-Task Within-Domain Comparisons}
+\label{app:matched}
+% ───────────────────────────────────────────────────────────────────────────
+
+To control for task and domain effects, we compare models only on shared tasks within each domain (31 tasks per domain, all three frontier models execute every task).
+
+\begin{table*}[h]
+\caption{Matched-task within-domain comparisons ($n{=}31$ shared tasks per domain per model). All tests Kruskal-Wallis. $^{***}$~$p{<}0.001$, n.s.~not significant.}
+\label{tab:matched}
+\centering\small
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Domain} & \textbf{Metric} & \textbf{Claude Opus 4.6} & \textbf{Gemini 3.1 Pro} & \textbf{GPT-5.4} & \textbf{$H$} & \textbf{Sig.} \\
+\midrule
+\multirow{2}{*}{Drug Discovery} & Steps & 4.1 $\pm$ 3.1 & 4.7 $\pm$ 5.6 & 4.2 $\pm$ 3.9 & 0.60 & n.s. \\
+& Errors & 2.5 $\pm$ 2.8 & 0.4 $\pm$ 0.9 & 0.03 $\pm$ 0.2 & 29.5 & $^{***}$ \\
+\midrule
+\multirow{2}{*}{Genomics} & Steps & 5.0 $\pm$ 5.8 & 5.9 $\pm$ 5.9 & 3.2 $\pm$ 3.4 & 2.70 & n.s. \\
+& Errors & 3.3 $\pm$ 5.6 & 0.5 $\pm$ 1.0 & 0.0 $\pm$ 0.0 & 29.3 & $^{***}$ \\
+\midrule
+\multirow{2}{*}{Literature} & Steps & 3.9 $\pm$ 4.0 & 4.3 $\pm$ 5.9 & 3.0 $\pm$ 3.5 & 3.80 & n.s. \\
+& Errors & 2.0 $\pm$ 2.3 & 0.3 $\pm$ 1.0 & 0.1 $\pm$ 0.3 & 31.8 & $^{***}$ \\
+\midrule
+\multirow{2}{*}{Materials Science} & Steps & 3.3 $\pm$ 1.8 & 4.5 $\pm$ 3.9 & 3.6 $\pm$ 3.5 & 0.44 & n.s. \\
+& Errors & 2.1 $\pm$ 1.7 & 0.3 $\pm$ 0.5 & 0.2 $\pm$ 0.5 & 34.0 & $^{***}$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The error rate divergence is \textbf{significant in every domain} ($p{<}0.0001$), while step counts are \textbf{non-significant in every domain}. This confirms that the error-handling difference is robust to domain effects and not an artifact of task selection or difficulty confounds.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Difficulty $\times$ Model Interaction}
+\label{app:difficulty}
+% ───────────────────────────────────────────────────────────────────────────
+
+\begin{table}[h]
+\caption{Per-difficulty, per-model mean steps and errors.}
+\label{tab:difficulty}
+\centering\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Difficulty} & \textbf{Model} & \textbf{Mean Steps} & \textbf{Mean Errors} \\
+\midrule
+\multirow{3}{*}{Easy ($n{=}147$)} & Claude Opus 4.6 & 1.9 & 0.27 \\
+& Gemini 3.1 Pro & 3.4 & 0.27 \\
+& GPT-5.4 & 2.0 & 0.00 \\
+\midrule
+\multirow{3}{*}{Medium ($n{=}153$)} & Claude Opus 4.6 & 5.8 & 4.14 \\
+& Gemini 3.1 Pro & 5.0 & 0.45 \\
+& GPT-5.4 & 4.9 & 0.12 \\
+\midrule
+\multirow{3}{*}{Hard ($n{=}72$)} & Claude Opus 4.6 & 4.9 & 3.54 \\
+& Gemini 3.1 Pro & 7.4 & 0.42 \\
+& GPT-5.4 & 3.4 & 0.17 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The error-handling divergence is concentrated in \textbf{medium and hard tasks}. Easy tasks produce uniformly short, low-error trajectories across all models (Claude averages just 0.27 errors on easy tasks vs.\ 4.14 on medium). This validates both the difficulty stratification and the intuition that process differences emerge most strongly on challenging scientific problems.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Benchmark Task Baselines}
+\label{app:baselines}
+% ───────────────────────────────────────────────────────────────────────────
+
+\subsection{Task 1: Trajectory Outcome Prediction}
+
+\textbf{Setup}: Given all step-level features from a complete trajectory, predict binary success (evaluable subset, $n{=}127$). Features: total steps, tool calls, errors, revisions, unique tools, unique phases, response length, error type count.
+
+\begin{table}[h]
+\caption{Outcome prediction baselines (5-fold stratified CV).}
+\label{tab:baselines}
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Method} & \textbf{Accuracy} & \textbf{AUROC} \\
+\midrule
+Majority baseline & 0.693 & 0.500 \\
+Logistic Regression & 0.685 $\pm$ 0.046 & 0.496 $\pm$ 0.096 \\
+Random Forest & 0.614 $\pm$ 0.049 & 0.452 $\pm$ 0.091 \\
+Gradient Boosting & 0.614 $\pm$ 0.033 & 0.426 $\pm$ 0.066 \\
+LSTM (2-layer, $h{=}64$) & 0.693 $\pm$ 0.015 & 0.422 $\pm$ 0.124 \\
+Transformer (2-layer, 4-head) & 0.693 $\pm$ 0.015 & 0.369 $\pm$ 0.093 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Finding}: No method exceeds the majority baseline accuracy (0.693). AUROC values are near or below chance. This confirms that \textbf{outcome prediction from trajectory-level features is genuinely difficult}: neither aggregate statistics (LR, RF, GBT) nor sequential patterns (LSTM, Transformer) on the current 8-dimensional feature set are predictive of success. This motivates future work on richer representations --- e.g., semantic embeddings of thought content or graph-structured encodings of tool-call dependencies.
+
+\subsection{Task 2: Error Localization}
+
+\textbf{Setup}: Among the 116 trajectories containing at least one error, identify the first step where reasoning went wrong.
+
+\textbf{Result}: 68.1\% of first errors occur at step 0 (the first tool invocation). The ``always predict step 0'' heuristic achieves 68.1\% accuracy; ``always predict last step'' achieves 0\%. Random baseline: ${\sim}$7\% (1/mean-steps).
+
+\textbf{Caveat}: The step-0 concentration partially reflects harness design (the first substantive action is typically a tool call). Future work should vary tool-initialization ordering to disambiguate harness artifact from generalizable agent behavior.
+
+\subsection{Task 3: Claim Verification}
+
+Success rates with Wilson score 95\% confidence intervals on the evaluable subset:
+\begin{itemize}
+\item GPT-5.4: 69.0\% [54.0\%, 80.9\%] ($n{=}42$)
+\item Claude Opus 4.6: 69.8\% [54.9\%, 81.4\%] ($n{=}43$)
+\item Gemini 3.1 Pro: 69.0\% [54.0\%, 80.9\%] ($n{=}42$)
+\end{itemize}
+
+The wide confidence intervals reflect the limited evaluable subset (only easy tasks have ground truth). Expanding ground-truth coverage to medium tasks is a Phase~2 priority.
+
+\subsection{Task 5: Process Quality Scoring}
+
+Composite score: (efficiency + tool\_use + low\_errors + conclusion\_rate) / 4, each normalized [0,1].
+\begin{itemize}
+\item GPT-5.4: 0.747 $\pm$ 0.008
+\item Gemini 3.1 Pro: 0.747 $\pm$ 0.011
+\item Claude Opus 4.6: 0.724 $\pm$ 0.067
+\end{itemize}
+Kruskal-Wallis $H{=}149.9$, $p{<}0.0001$. Claude scores significantly lower due to its higher error rate, despite matching success rates. This demonstrates that \textbf{process quality scoring reveals quality differences invisible to binary success metrics}.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{LLM-Based Inter-Annotator Agreement}
+\label{app:iaa}
+% ───────────────────────────────────────────────────────────────────────────
+
+We annotated a 60-trajectory stratified sample (5 per model per domain) using GPT-5.4-mini and Claude Sonnet 4.6 as annotators. Each annotator rated every trajectory on four axes (1--5 ordinal scale for the first three; L1--L4 categorical for autonomy).
+
+\begin{table}[h]
+\caption{LLM-based inter-annotator agreement (Krippendorff's $\alpha$).}
+\label{tab:iaa}
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Axis} & \textbf{$\alpha$} & \textbf{Interpretation} \\
+\midrule
+Correctness & 0.629 & Moderate \\
+Reasoning quality & 0.711 & Substantial \\
+Tool use efficiency & 0.717 & Substantial \\
+Autonomy level (L1--L4) & 0.820 & Near-perfect \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The autonomy taxonomy (L1--L4) exceeds the $\alpha {\geq} 0.67$ target, providing initial evidence that the proposed levels are reliably distinguishable. Weighted agreement (within 1 point on 5-point scales) exceeds 0.85 across all axes. We note that LLM-based annotation is a proxy for human annotation; the planned Phase~3 human expert study (3 annotators, 120 trajectories) will provide definitive IAA measurements.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Tool Usage and Latency Statistics}
+\label{app:tools}
+% ───────────────────────────────────────────────────────────────────────────
+
+\begin{table}[h]
+\caption{Tool invocation counts by model (across 124 frontier trajectories each).}
+\label{tab:tools}
+\centering\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Tool} & \textbf{Claude} & \textbf{Gemini} & \textbf{GPT-5.4} \\
+\midrule
+\texttt{python\_exec} & 341 & 372 & 163 \\
+\texttt{web\_search} & 7 & 49 & 72 \\
+\texttt{pubmed\_search} & 1 & 41 & 35 \\
+\texttt{api\_call} & 1 & 3 & 31 \\
+\midrule
+\textbf{Total} & 350 & 465 & 301 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Python execution dominates (78.5\% of 1,116 total calls). GPT-5.4 uses a notably more diverse tool mix (23.9\% web search, 11.6\% PubMed, 10.3\% API calls) compared to Claude (98\% Python). Mean per-tool latencies: \texttt{python\_exec} 27.5s, \texttt{pubmed\_search} 11.2s, \texttt{web\_search} 8.8s, \texttt{api\_call} 6.8s.
+
+\textbf{Note on web search}: The current release uses simulated web search (models use parametric knowledge). The 30 live-retrieval variant trajectories demonstrate the harness's ability to execute real PubMed and PubChem API calls; PubMed returned results for 2 of 30 pilot tasks. Phase~4 will expand live retrieval to all literature-domain tasks.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Open-Weight Model Details}
+\label{app:openweight}
+% ───────────────────────────────────────────────────────────────────────────
+
+To enable fully reproducible baselines without proprietary API access, we generated 120 trajectories from four open-weight models, each executing the same 30 tasks (first 30 from the task bank: drug discovery easy and medium).
+
+\begin{table}[h]
+\caption{Open-weight model specifications and performance.}
+\label{tab:openweight}
+\centering\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Parameters} & \textbf{GPU} & \textbf{Mean time/task} \\
+\midrule
+Qwen2.5-7B-Instruct & 7B & A10G & ${\sim}$15s \\
+Mistral-7B-Instruct-v0.3 & 7B & A10G & ${\sim}$15s \\
+Phi-3.5-mini-instruct & 3.8B & A10G & ${<}$1s \\
+Qwen2.5-1.5B-Instruct & 1.5B & V100 & ${\sim}$7s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All open-weight models produce single-response trajectories (the entire scientific workflow in one generation) since they lack the multi-turn tool-call scaffolding of the frontier model harness. These trajectories are included to demonstrate that the schema accommodates any model interface and to provide a fully reproducible reference set for the community. Future work will implement tool-call support for open-weight models via function-calling APIs.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Task Bank Examples}
+\label{app:tasks}
+% ───────────────────────────────────────────────────────────────────────────
+
+The full task bank comprises 200 tasks (50 per domain). Below are representative examples at each difficulty level. The complete task bank is available in \texttt{task\_bank.json} in the release.
+
+\textbf{Drug Discovery.}
+\begin{itemize}
+\item \textbf{Easy}: ``Retrieve the molecular weight, LogP, and number of hydrogen bond donors for aspirin. Report the exact values.''
+\item \textbf{Medium}: ``Find all known kinase inhibitors approved by the FDA that target VEGFR-2. For each, report the drug name, approval year, and whether it also inhibits other kinases.''
+\item \textbf{Hard}: ``Propose a novel drug repurposing hypothesis for an existing FDA-approved drug to treat Alzheimer's disease. Base your hypothesis on molecular target analysis, pathway overlap, and available clinical evidence. Design a computational experiment to validate your hypothesis.''
+\end{itemize}
+
+\textbf{Materials Science.}
+\begin{itemize}
+\item \textbf{Easy}: ``What is the band gap of gallium arsenide (GaAs)? Is it a direct or indirect band gap semiconductor?''
+\item \textbf{Medium}: ``Design a high-entropy alloy (HEA) composition for high-temperature applications. Select 5 elements, justify each choice based on Hume-Rothery rules, and predict the likely crystal structure using the VEC criterion.''
+\item \textbf{Hard}: ``Propose a novel solid-state electrolyte composition for all-solid-state lithium batteries that balances ionic conductivity, electrochemical stability window, and mechanical properties. Justify using first-principles reasoning and literature evidence.''
+\end{itemize}
+
+\textbf{Genomics.}
+\begin{itemize}
+\item \textbf{Easy}: ``What is the chromosomal location and function of the TP53 gene? How many exons does it have?''
+\item \textbf{Medium}: ``Design a CRISPR guide RNA to knock out the human PCSK9 gene. Specify the target exon, the 20-nt guide sequence, the PAM site, and predict off-target effects.''
+\item \textbf{Hard}: ``Propose a computational pipeline to identify novel synthetic lethal gene pairs in pancreatic cancer. Design the approach using DepMap, COSMIC, and STRING, specify the statistical framework, and predict at least one novel interaction.''
+\end{itemize}
+
+\textbf{Scientific Literature.}
+\begin{itemize}
+\item \textbf{Easy}: ``Find the original paper describing the transformer architecture (`Attention Is All You Need'). Report the full citation, venue, and citation count.''
+\item \textbf{Medium}: ``Identify contradictions in the literature about whether transformer-based protein language models can predict protein function more accurately than alignment-based methods. Find papers supporting each side.''
+\item \textbf{Hard}: ``Write a critical analysis of the claim that `AI will replace human scientists within 10 years.' Gather evidence from proponents and skeptics, evaluate argument strength, and formulate an evidence-based position.''
+\end{itemize}
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Agent Harness Details}
+\label{app:harness}
+% ───────────────────────────────────────────────────────────────────────────
+
+The agent harness is a Python script (\texttt{agent\_harness.py}) that orchestrates trajectory generation. Key design choices:
+
+\begin{itemize}
+\item \textbf{System prompt}: A standardized 6-phase scientific workflow (literature review $\to$ hypothesis $\to$ experiment design $\to$ execution $\to$ analysis $\to$ conclusion). All models receive the identical system prompt.
+\item \textbf{Tool suite}: Four tools: \texttt{python\_exec} (sandboxed subprocess with 60s timeout), \texttt{web\_search} (simulated), \texttt{pubmed\_search} (real E-utilities API), \texttt{api\_call} (PubChem, UniProt, Materials Project).
+\item \textbf{Step limit}: Maximum 30 steps per trajectory. Models are nudged to conclude starting at step 15 and explicitly prompted at step 25.
+\item \textbf{Temperature}: 0.0 for all frontier models (deterministic). Open-weight models use \texttt{do\_sample=False}.
+\item \textbf{Checkpointing}: Each trajectory is saved as a JSON file immediately upon completion.
+\item \textbf{Concurrency}: Up to 4 concurrent API calls per model to respect rate limits.
+\item \textbf{Error handling}: API errors (timeouts, rate limits) are logged in the trajectory and the model is given an opportunity to recover.
+\end{itemize}
+
+\textbf{Sensitivity to harness design}: The 6-phase prompt, 30-step cap, and tool suite are design choices that affect trajectory characteristics. Models may collapse phases when the prompt encourages comprehensive responses (as observed with Claude's single-response pattern in our earlier pilot). Future work should systematically vary these parameters (step limits of 10/30/60, alternative prompt structures, expanded tool suites) to quantify sensitivity.
+
+% ───────────────────────────────────────────────────────────────────────────
+\section{Access and Reproducibility}
+\label{app:access}
+% ───────────────────────────────────────────────────────────────────────────
+
+\textbf{Code}: \texttt{github.com/aayambansal/OpenDiscoveryTrace} (MIT license for code).
+
+\textbf{Data}: \texttt{huggingface.co/datasets/aayambansall/OpenDiscoveryTrace} (CC-BY-4.0 for data).
+
+\textbf{Reproducing frontier trajectories}: Requires API keys for OpenAI (GPT-5.4), Anthropic (Claude Opus 4.6), and Google (Gemini 3.1 Pro). Run: \texttt{python src/agent\_harness.py --model gpt-5.4}.
+
+\textbf{Reproducing open-weight trajectories}: Requires only a GPU (V100 16GB or better) and HuggingFace model access. No API keys needed. Run: \texttt{python src/run\_opensource.py}.
+
+\textbf{Running analysis}: \texttt{python src/analyze\_trajectories.py} regenerates all figures and statistics from the trajectory JSON files.
 
 \end{document}
