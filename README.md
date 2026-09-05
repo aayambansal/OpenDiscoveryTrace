@@ -14,7 +14,8 @@
 
 🎤 **Oral presentation** — Dataset & AI Scientist Highlights, Block 1 · Saturday, July 11, 2026 · 10:30–10:50 KST · Hall C, ICML 2026
 
-📄 **Paper:** [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) · 🤗 **Dataset:** [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
+📄 **Paper:** [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) · 
+🤗 **Dataset:** [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
 
 </div>
 
