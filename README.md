@@ -2,8 +2,19 @@
 
 **Process Traces for Evaluating AI Scientist Workflows**
 
+[![Best Dataset Award](https://img.shields.io/badge/%F0%9F%8F%86%20Best%20Dataset%20Award-ICML%202026%20AI%20for%20Science-gold)](https://ai4sciencecommunity.github.io/icml26/schedule)
+[![Oral Presentation](https://img.shields.io/badge/Oral-ICML%202026%20AI4Science%20Workshop-blue)](https://ai4sciencecommunity.github.io/icml26/schedule)
+[![OpenReview](https://img.shields.io/badge/OpenReview-EHT3wVhCUZ-8c1b13)](https://openreview.net/forum?id=EHT3wVhCUZ)
+[![Dataset on HF](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Dataset on HF](https://img.shields.io/badge/HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
+
+**Aayam Bansal, Keertan Balaji**
+
+> 🏆 **Best Dataset Award** — ICML 2026 Workshop on AI for Science: *AI Scientists – Tools, Co-authors, or Founders?* (Dataset Proposal Competition, sponsored by KAIROS AI)
+>
+> 🎤 **Oral presentation** — Dataset & AI Scientist Highlights, Block 1 · Saturday, July 11, 2026 · 10:30–10:50 KST · Hall C, ICML 2026
+>
+> 📄 **Paper:** [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) · 🤗 **Dataset:** [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
 
 ---
 
@@ -11,11 +22,25 @@
 
 Existing benchmarks for AI scientific agents evaluate only final outputs. OpenDiscoveryTrace captures the **full reasoning process** — every thought, tool call, error, revision, and confidence estimate — as models work through scientific tasks.
 
-**522 trajectories** across **7 models** (3 frontier, 4 open-weight), **124 tasks** in 4 science domains.
+**558 trajectories** across **7 models** (3 frontier, 4 open-weight), **124 tasks** in 4 science domains (drug discovery, materials science, genomics, scientific literature analysis).
 
 ### Headline Result
 
-All frontier models achieve the same success rate (~69%), yet Claude Opus 4.6 makes **30x more errors** than GPT-5.4 — predominantly tool misuse (66.7%) vs. reasoning errors (83.6%). Output-only benchmarks miss this entirely.
+On 363 LLM-judged frontier trajectories, all three frontier models achieve comparable success rates (GPT-5.4: 88.6%, Gemini 3.1 Pro: 89.3%, Claude Opus 4.6: 83.9%), yet Claude Opus 4.6 makes **30× more errors** than GPT-5.4 (2.5 vs. 0.08 per trajectory, *p* < 10⁻⁴, Cliff's δ = 0.613). The error profiles are qualitatively different: 66.7% tool misuse for Claude versus 83.6% reasoning errors for GPT-5.4. Output-only benchmarks miss this entirely.
+
+---
+
+## Links
+
+| Resource | Link |
+|----------|------|
+| Paper (OpenReview) | [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) |
+| Paper (PDF in this repo) | [`paper/paper.pdf`](paper/paper.pdf) · [full-length version](paper/supplementary/paper_full_version.pdf) |
+| Full dataset (HuggingFace) | [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace) |
+| Workshop | [AI Scientists – Tools, Co-authors, or Founders? @ ICML 2026](https://ai4sciencecommunity.github.io/icml26) |
+| Workshop schedule | [ai4sciencecommunity.github.io/icml26/schedule](https://ai4sciencecommunity.github.io/icml26/schedule) |
+| Dataset Proposal Competition | [ai4sciencecommunity.github.io/icml26/dataset](https://ai4sciencecommunity.github.io/icml26/dataset) |
+| ICML virtual page | [icml.cc/virtual/2026/workshop/54099](https://icml.cc/virtual/2026/workshop/54099) |
 
 ---
 
@@ -61,6 +86,7 @@ OpenDiscoveryTrace/
 │   ├── methodology.md              #   Pre-analysis plan
 │   └── synthesis.md                #   Results interpretation
 │
+├── assets/                         # Award certificate
 ├── LICENSE                         # CC-BY-4.0
 ├── requirements.txt
 └── README.md
@@ -95,7 +121,7 @@ python src/analysis/analyze_trajectories.py
 ### Generate new trajectories
 
 ```bash
-# Frontier models (requires API keys)
+# Frontier models (requires OPENAI_API_KEY / ANTHROPIC_API_KEY / GEMINI_API_KEY)
 python src/harness/agent_harness.py --model gpt-5.4 --max-tasks 10
 
 # Open-weight models (requires GPU, no API keys)
@@ -126,15 +152,20 @@ Full JSON schema in [`paper/paper.tex`](paper/paper.tex) Appendix A.
 
 ## Models
 
-| Model | Type | Trajectories | Tasks |
-|-------|------|-------------|-------|
-| GPT-5.4 | Frontier | 124 | 124 |
-| Claude Opus 4.6 | Frontier | 124 | 124 |
-| Gemini 3.1 Pro | Frontier | 124 | 124 |
-| Qwen2.5-7B-Instruct | Open-weight | 30 | 30 |
-| Mistral-7B-v0.3 | Open-weight | 30 | 30 |
-| Phi-3.5-mini-instruct | Open-weight | 30 | 30 |
-| Qwen2.5-1.5B-Instruct | Open-weight | 30 | 30 |
+| Model | Type | Trajectories |
+|-------|------|-------------|
+| GPT-5.4 | Frontier | 124 |
+| Claude Opus 4.6 | Frontier | 124 |
+| Gemini 3.1 Pro | Frontier | 124 |
+| Qwen2.5-7B-Instruct | Open-weight (single-response) | 30 |
+| Mistral-7B-v0.3 | Open-weight (single-response) | 30 |
+| Phi-3.5-mini-instruct | Open-weight (single-response) | 30 |
+| Qwen2.5-1.5B-Instruct | Open-weight (single-response) | 30 |
+| Qwen2.5-7B-Instruct | Open-weight (tool-scaffolded, full multi-step harness) | 6 |
+| Frontier models | Live-retrieval variants (PubMed / PubChem) | 60 |
+| **Total** | | **558** |
+
+Frontier trajectories are fully balanced across 4 domains × 3 difficulty levels.
 
 ---
 
@@ -146,13 +177,13 @@ Full JSON schema in [`paper/paper.tex`](paper/paper.tex) Appendix A.
 4. **Autonomy Classification** — classify L1–L4 autonomy levels
 5. **Process Quality Scoring** — multi-axis trajectory quality
 
-Baselines in [`results/statistics/`](results/statistics/) and Appendix H of the paper.
+Baselines (logistic regression, random forest, LSTM, Transformer) in [`results/statistics/`](results/statistics/) and Appendix H of the paper.
 
 ---
 
 ## Full Dataset
 
-Sample trajectories are included in `data/samples/`. The complete 522-trajectory dataset is on HuggingFace:
+Sample trajectories are included in `data/samples/`. The complete dataset is hosted on HuggingFace:
 
 **[huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)**
 
@@ -161,16 +192,35 @@ Sample trajectories are included in `data/samples/`. The complete 522-trajectory
 ## Citation
 
 ```bibtex
-@inproceedings{opendiscoverytrace2026,
+@inproceedings{bansal2026opendiscoverytrace,
   title     = {OpenDiscoveryTrace: Process Traces for Evaluating
                AI Scientist Workflows},
-  author    = {Anonymous},
-  booktitle = {AI for Science Workshop, ICML},
+  author    = {Bansal, Aayam and Balaji, Keertan},
+  booktitle = {ICML 2026 Workshop on AI for Science: AI Scientists --
+               Tools, Co-authors, or Founders?},
   year      = {2026},
-  note      = {Dataset Proposal Competition}
+  url       = {https://openreview.net/forum?id=EHT3wVhCUZ},
+  note      = {Best Dataset Award, Dataset Proposal Competition}
 }
 ```
 
+---
+
+## Authors
+
+- **Aayam Bansal** — [aayambansal@gmail.com](mailto:aayambansal@gmail.com)
+- **Keertan Balaji**
+
 ## License
 
-Code: MIT. Data and paper: [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).
+Code, data, and paper are released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). See [`LICENSE`](LICENSE).
+
+---
+
+## Best Dataset Award
+
+<p align="center">
+  <img src="assets/best_dataset_award_icml2026.jpg" alt="Best Dataset Award for ICML 2026 AI for Science Workshop, presented to Aayam Bansal and Keertan Balaji for OpenDiscoveryTrace" width="640">
+</p>
+
+<p align="center"><em>Best Dataset Award, ICML 2026 AI for Science Workshop — sponsored by KAIROS AI.</em></p>
