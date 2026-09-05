@@ -51,7 +51,7 @@
 \vskip 0.3in
 
 \begin{abstract}
-Existing benchmarks for autonomous AI scientists evaluate only final outputs---generated code, hypotheses, or papers---yet discard the reasoning process by which those outputs were obtained. This makes it impossible to audit scientific methodology, diagnose failure modes, or distinguish systematic reasoning from fortunate guessing. We propose \dataset, a public dataset of 558 complete AI scientific agent trajectories that captures \emph{how} models reason, not just what they produce. Each trajectory records a structured 9-field-per-step trace---including thoughts, tool calls, observations, errors, revision triggers, and self-reported confidence---as models execute 124 scientific tasks spanning drug discovery, materials science, genomics, and scientific literature analysis. The dataset covers seven models: three frontier (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 trajectories each, fully balanced across domains and difficulty levels) and four open-weight (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), plus 30 live-retrieval variant trajectories. Pilot analysis on 363 LLM-judged trajectories reveals that process traces expose behavioral differences invisible to output-only evaluation: all three frontier models achieve comparable success rates (84--89\%), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$ per trajectory, $p{<}0.0001$, Cliff's $\delta{=}0.613$), with qualitatively different error profiles---66.7\% tool misuse for Claude versus 83.6\% reasoning errors for GPT-5.4. We define five benchmark tasks with baselines from logistic regression, random forests, LSTM, and Transformer models. The dataset, trace schema, agent harness, and benchmark definitions will be released under CC-BY-4.0 to support research on process-level evaluation, scientific agent auditing, and AI governance.
+Existing benchmarks for autonomous AI scientists evaluate only final outputs---generated code, hypotheses, or papers---yet discard the reasoning process by which those outputs were obtained. This makes it impossible to audit scientific methodology, diagnose failure modes, or distinguish systematic reasoning from fortunate guessing. We present \dataset, a public dataset of 558 complete AI scientific agent trajectories that captures \emph{how} models reason, not just what they produce. Each trajectory records a structured 9-field-per-step trace---including thoughts, tool calls, observations, errors, revision triggers, and self-reported confidence---as models execute 124 scientific tasks spanning drug discovery, materials science, genomics, and scientific literature analysis. The dataset covers seven models: three frontier (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 trajectories each, fully balanced across domains and difficulty levels) and four open-weight (Qwen2.5-7B, Mistral-7B-v0.3, Phi-3.5-mini, Qwen2.5-1.5B; 30 each), plus 60 live-retrieval variant trajectories. Pilot analysis on 363 LLM-judged trajectories reveals that process traces expose behavioral differences invisible to output-only evaluation: all three frontier models achieve comparable success rates (84--89\%), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$ per trajectory, $p{<}0.0001$, Cliff's $\delta{=}0.613$), with qualitatively different error profiles---66.7\% tool misuse for Claude versus 83.6\% reasoning errors for GPT-5.4. We define five benchmark tasks with baselines from logistic regression, random forests, LSTM, and Transformer models. The dataset, trace schema, agent harness, and benchmark definitions are publicly available under CC-BY-4.0 to support research on process-level evaluation, scientific agent auditing, and AI governance.
 \end{abstract}
 ]
 
@@ -99,7 +99,7 @@ Each step records 9 fields extending ReAct~\citep{yao2023react}: \texttt{phase},
 
 \textbf{Phase~4 (months 3--6).} Live retrieval integration for all literature-domain tasks via PubMed and PubChem APIs (a 30-task pilot is already included). ELN integration pilot for physical-lab trace capture~\citep{dirnagl2016eln,abolhasani2023selfdriving}, extending the dataset from computational-only to hybrid computational-physical settings.
 
-\textbf{Sustainability.} Semver-versioned schema (v1.0 = current release). Dataset hosted on a public repository with DOI for citability. Open-source harness enabling community-contributed trajectories. Annual refresh cycles incorporating new frontier and open-weight models as they become available.
+\textbf{Sustainability.} Semver-versioned schema (v1.0 = current release). Dataset hosted on the Hugging Face Hub, with the harness and analysis code on GitHub (Appendix~\ref{app:access}). Open-source harness enabling community-contributed trajectories. Annual refresh cycles incorporating new frontier and open-weight models as they become available.
 
 % ===========================================================================
 \vspace{-0.3em}
@@ -590,11 +590,16 @@ The agent harness is a Python script (\texttt{agent\_harness.py}) that orchestra
 \textbf{Sensitivity to harness design}: The 6-phase prompt, 30-step cap, and tool suite are design choices that affect trajectory characteristics. Models may collapse phases when the prompt encourages comprehensive responses (as observed with Claude's single-response pattern in our earlier pilot). Future work should systematically vary these parameters (step limits of 10/30/60, alternative prompt structures, expanded tool suites) to quantify sensitivity.
 
 % ───────────────────────────────────────────────────────────────────────────
-\section{Reproducibility}
+\section{Code and Data Availability}
 \label{app:access}
 % ───────────────────────────────────────────────────────────────────────────
 
-Code, data, and the complete task bank will be publicly released upon acceptance. The release includes an agent harness script for trajectory generation, analysis pipelines for reproducing all figures and statistics, and the full set of 522 trajectory JSON files.
+Code, data, and the complete task bank are publicly available under CC-BY-4.0:
+\begin{itemize}
+\item \textbf{Dataset} (all trajectory JSON files, task bank, and analysis results): \url{https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace}
+\item \textbf{Code} (agent harness, analysis pipelines, benchmark baselines, sample trajectories, and paper source): \url{https://github.com/aayambansal/OpenDiscoveryTrace}
+\end{itemize}
+The GitHub repository contains the agent harness script for trajectory generation and the analysis pipelines that reproduce all figures and statistics; the trajectory JSON files, task bank, and analysis results are hosted on the Hugging Face Hub.
 
 \textbf{Reproducing frontier trajectories} requires API keys for the three frontier model providers. The harness script accepts a \texttt{--model} flag to select any supported model and a \texttt{--max-tasks} flag to control the number of tasks.
 

@@ -81,7 +81,7 @@ We introduce \dataset, a dataset of \ntrajectories complete AI scientific agent 
 Each trajectory records a 9-field-per-step trace (thoughts, tool calls, errors, revisions, confidence) across \nexecuted tasks in four science domains, executed by three frontier models (GPT-5.4, Claude Opus 4.6, Gemini 3.1 Pro; 124 each, balanced).
 All three models achieve indistinguishable success rates (${\sim}69\%$, $p{=}0.997$), yet Claude Opus 4.6 produces $30{\times}$ more errors than GPT-5.4 ($2.5$ vs.\ $0.08$, $p{<}0.0001$, Cliff's $\delta{=}0.613$) while arriving at the same answers---errors that are predominantly tool misuse (66.7\%) versus reasoning errors (83.6\%).
 We define five benchmark tasks with baselines (including LSTM and Transformer sequence models), report LLM-based inter-annotator agreement (Krippendorff's $\alpha$ up to 0.82), and include open-source model trajectories and a live-retrieval variant.
-The current release studies computational reasoning with simulated web search; the dataset, schema, and harness will be released under CC-BY-4.0.
+The current release studies computational reasoning with simulated web search; the dataset, schema, and harness are publicly available under CC-BY-4.0.
 \end{abstract}
 ]
 
@@ -406,13 +406,16 @@ Several directions emerge from this initial release. The immediate priority is e
 \section{Broader Impact and Ethics}
 \label{sec:ethics}
 
-\dataset will be released under the CC-BY-4.0 license. The dataset contains no personally identifiable information and no sensitive data; all tasks involve publicly available scientific knowledge, and all model outputs are generated from publicly accessible APIs. The intended use is to support evaluation and improvement of AI scientific agents, process-level auditing, and governance research.
+\dataset is released under the CC-BY-4.0 license. The dataset contains no personally identifiable information and no sensitive data; all tasks involve publicly available scientific knowledge, and all model outputs are generated from publicly accessible APIs. The intended use is to support evaluation and improvement of AI scientific agents, process-level auditing, and governance research.
 
 One potential misuse is benchmark gaming, whereby model developers optimize specifically for \dataset tasks rather than general scientific reasoning ability. We mitigate this risk through the diversity of our task bank (four domains, three difficulty levels, 200 tasks) and the emphasis on process-level evaluation, which is harder to game than output-matching. The dataset could also be used to train agents that mimic the surface patterns of successful trajectories without genuine scientific understanding; this risk is inherent to any publicly released benchmark and is outweighed by the transparency benefits of open data.
 
 As noted in Section~\ref{sec:discussion}, releasing chain-of-thought traces from proprietary models raises compliance questions regarding provider terms of service. We will release abstracted state summaries (preserving process structure while omitting verbatim reasoning) alongside full traces where provider agreements permit, and clearly document the provenance and redistribution terms for each model's data. We encourage users of \dataset to verify compliance with applicable provider policies before using full traces for model training or distillation.
 
 We encourage users of \dataset to report results on both process metrics and outcome metrics, and to interpret model comparisons in light of the caveats described in Section~\ref{sec:limitations}. The dataset is designed to support research on how AI scientists work, not to produce definitive model rankings.
+
+\paragraph{Code and Data Availability.}
+The dataset (all trajectory JSON files, task bank, and analysis results) is hosted on the Hugging Face Hub at \url{https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace}, and the agent harness, analysis pipelines, benchmark baselines, and paper source are available at \url{https://github.com/aayambansal/OpenDiscoveryTrace}, all under CC-BY-4.0.
 
 % ===========================================================================
 % REFERENCES
