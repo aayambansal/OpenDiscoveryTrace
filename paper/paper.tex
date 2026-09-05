@@ -2,7 +2,7 @@
 % OpenDiscoveryTrace — ICML 2026 AI4Science Dataset Competition (2 pages)
 % ===========================================================================
 \documentclass{article}
-\usepackage{icml2026}
+\usepackage[accepted]{icml2026}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -22,8 +22,18 @@
 
 % Override ICML default notice for workshop submission
 \makeatletter
-\renewcommand{\Notice@String}{Submitted to the AI for Science workshop (ICML 2026).}
+\renewcommand{\Notice@String}{AI for Science Workshop, ICML 2026. Best Dataset Award.}
 \makeatother
+
+
+% Accepted version: real author names, no institutional affiliations.
+\makeatletter
+\renewcommand{\printAffiliationsAndNotice}[1]{\global\icml@noticeprintedtrue%
+  {\let\thefootnote\relax\footnotetext{\hspace*{-\footnotesep}\raggedright
+      Correspondence to: \icmlcorrespondingauthor@text.\ \\
+      \Notice@String}}}
+\makeatother
+\hypersetup{pdfauthor={Aayam Bansal, Keertan Balaji}, pdftitle={OpenDiscoveryTrace: Process Traces for Evaluating AI Scientist Workflows}}
 
 \begin{document}
 
@@ -32,10 +42,10 @@
 
 \icmlsetsymbol{equal}{*}
 \begin{icmlauthorlist}
-\icmlauthor{Anonymous Author(s)}{anon}
+\icmlauthor{Aayam Bansal}{}
+\icmlauthor{Keertan Balaji}{}
 \end{icmlauthorlist}
-\icmlaffiliation{anon}{Under Review}
-\icmlcorrespondingauthor{Anonymous Author(s)}{anon@example.com}
+\icmlcorrespondingauthor{Aayam Bansal}{\mbox{aayambansal@gmail.com}}
 \icmlkeywords{AI for science, dataset, scientific agents, process evaluation}
 
 \vskip 0.3in

@@ -1,3 +1,5 @@
+<div align="center">
+
 # OpenDiscoveryTrace
 
 **Process Traces for Evaluating AI Scientist Workflows**
@@ -8,13 +10,13 @@
 [![Dataset on HF](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-**Aayam Bansal, Keertan Balaji**
+🏆 **Best Dataset Award** — ICML 2026 Workshop on AI for Science: *AI Scientists – Tools, Co-authors, or Founders?* (Dataset Proposal Competition)
 
-> 🏆 **Best Dataset Award** — ICML 2026 Workshop on AI for Science: *AI Scientists – Tools, Co-authors, or Founders?* (Dataset Proposal Competition, sponsored by KAIROS AI)
->
-> 🎤 **Oral presentation** — Dataset & AI Scientist Highlights, Block 1 · Saturday, July 11, 2026 · 10:30–10:50 KST · Hall C, ICML 2026
->
-> 📄 **Paper:** [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) · 🤗 **Dataset:** [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
+🎤 **Oral presentation** — Dataset & AI Scientist Highlights, Block 1 · Saturday, July 11, 2026 · 10:30–10:50 KST · Hall C, ICML 2026
+
+📄 **Paper:** [openreview.net/forum?id=EHT3wVhCUZ](https://openreview.net/forum?id=EHT3wVhCUZ) · 🤗 **Dataset:** [huggingface.co/datasets/aayambansall/OpenDiscoveryTrace](https://huggingface.co/datasets/aayambansall/OpenDiscoveryTrace)
+
+</div>
 
 ---
 
@@ -55,7 +57,7 @@ OpenDiscoveryTrace/
 │   ├── references.bib              #   Bibliography
 │   ├── table_comparison.tex        #   Benchmark comparison table
 │   ├── figures/                    #   Figures used in paper
-│   └── supplementary/              #   Full-length analysis paper (15pp)
+│   └── supplementary/              #   Full-length analysis paper
 │
 ├── src/
 │   ├── harness/                    # Trajectory generation
@@ -189,6 +191,12 @@ Sample trajectories are included in `data/samples/`. The complete dataset is hos
 
 ---
 
+## License
+
+Code, data, and paper are released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). See [`LICENSE`](LICENSE).
+
+---
+
 ## Citation
 
 ```bibtex
@@ -206,21 +214,10 @@ Sample trajectories are included in `data/samples/`. The complete dataset is hos
 
 ---
 
-## Authors
-
-- **Aayam Bansal** — [aayambansal@gmail.com](mailto:aayambansal@gmail.com)
-- **Keertan Balaji**
-
-## License
-
-Code, data, and paper are released under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). See [`LICENSE`](LICENSE).
-
----
-
 ## Best Dataset Award
 
 <p align="center">
-  <img src="assets/best_dataset_award_icml2026.jpg" alt="Best Dataset Award for ICML 2026 AI for Science Workshop, presented to Aayam Bansal and Keertan Balaji for OpenDiscoveryTrace" width="640">
+  <img src="assets/best_dataset_award_icml2026.jpg" alt="Best Dataset Award for ICML 2026 AI for Science Workshop" width="640">
 </p>
 
-<p align="center"><em>Best Dataset Award, ICML 2026 AI for Science Workshop — sponsored by KAIROS AI.</em></p>
+<p align="center"><em>Best Dataset Award, ICML 2026 AI for Science Workshop.</em></p>
